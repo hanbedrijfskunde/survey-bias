@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Survey Bias Quiz - Enhanced</title>
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+					Helvetica, Arial, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				color: #333;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				margin: 0;
+				padding: 20px;
+			}
+
+			#quiz-container {
+				background-color: #ffffff;
+				border-radius: 16px;
+				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+				width: 100%;
+				max-width: 900px;
+				padding: 40px;
+				position: relative;
+				overflow: hidden;
+				transition: all 0.3s ease;
+			}
+
+			.progress-container {
+				width: 100%;
+				height: 6px;
+				background-color: #e0e0e0;
+				border-radius: 3px;
+				margin-bottom: 30px;
+				overflow: hidden;
+			}
+
+			.progress-bar {
+				height: 100%;
+				background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+				width: 0%;
+				border-radius: 3px;
+				transition: width 0.6s ease;
+			}
+
+			.progress-text {
+				text-align: center;
+				font-size: 0.9em;
+				color: #666;
+				margin-bottom: 20px;
+			}
+
+			.question-header {
+				text-align: center;
+				margin-bottom: 30px;
+				font-size: 1.8em;
+				font-weight: 700;
+				color: #2c3e50;
+				opacity: 0;
+				animation: slideIn 0.6s ease forwards;
+			}
+
+			@keyframes slideIn {
+				from {
+					opacity: 0;
+					transform: translateY(-20px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			.question-pair {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 25px;
+				margin-bottom: 30px;
+				border-top: 2px solid #e8ecf4;
+				border-bottom: 2px solid #e8ecf4;
+				padding: 25px 0;
+				opacity: 0;
+				animation: slideIn 0.6s ease 0.2s forwards;
+			}
+
+			@media (max-width: 768px) {
+				.question-pair {
+					grid-template-columns: 1fr;
+					gap: 20px;
+				}
+			}
+
+			.question-box {
+				padding: 20px;
+				border-radius: 12px;
+				background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+				border: 1px solid #dee2e6;
+				position: relative;
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
+			}
+
+			.question-box:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			}
+
+			.question-box h3 {
+				margin-top: 0;
+				margin-bottom: 15px;
+				color: #495057;
+				font-size: 1.1em;
+				font-weight: 600;
+			}
+
+			.question-box.biased h3 {
+				color: #e74c3c;
+			}
+
+			.question-box.improved h3 {
+				color: #27ae60;
+			}
+
+			.question-box p {
+				font-style: italic;
+				line-height: 1.6;
+				margin: 0;
+				font-size: 0.95em;
+			}
+
+			.quiz-question {
+				text-align: center;
+				font-size: 1.3em;
+				font-weight: 600;
+				color: #2c3e50;
+				margin-bottom: 25px;
+				opacity: 0;
+				animation: slideIn 0.6s ease 0.4s forwards;
+			}
+
+			#options-container {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 15px;
+				margin-bottom: 25px;
+				opacity: 0;
+				animation: slideIn 0.6s ease 0.6s forwards;
+			}
+
+			.option-btn {
+				background: linear-gradient(145deg, #4facfe, #00f2fe);
+				color: white;
+				border: none;
+				padding: 18px 20px;
+				border-radius: 12px;
+				font-size: 1em;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+				transform: translateY(0);
+			}
+
+			.option-btn::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: -100%;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(
+					90deg,
+					transparent,
+					rgba(255, 255, 255, 0.2),
+					transparent
+				);
+				transition: left 0.5s;
+			}
+
+			.option-btn:hover:not(:disabled) {
+				transform: translateY(-3px);
+				box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+			}
+
+			.option-btn:hover:not(:disabled)::before {
+				left: 100%;
+			}
+
+			.option-btn:active {
+				transform: translateY(-1px);
+			}
+
+			.option-btn:disabled {
+				cursor: not-allowed;
+				opacity: 0.8;
+			}
+
+			.option-btn.correct {
+				background: linear-gradient(145deg, #2ecc71, #27ae60);
+				animation: pulse 0.6s ease;
+			}
+
+			.option-btn.incorrect {
+				background: linear-gradient(145deg, #e74c3c, #c0392b);
+				animation: shake 0.6s ease;
+			}
+
+			@keyframes pulse {
+				0%,
+				100% {
+					transform: scale(1);
+				}
+				50% {
+					transform: scale(1.05);
+				}
+			}
+
+			@keyframes shake {
+				0%,
+				100% {
+					transform: translateX(0);
+				}
+				25% {
+					transform: translateX(-5px);
+				}
+				75% {
+					transform: translateX(5px);
+				}
+			}
+
+			#feedback-container {
+				padding: 20px;
+				border-radius: 12px;
+				margin-top: 25px;
+				line-height: 1.7;
+				font-size: 1.05em;
+				opacity: 0;
+				transform: translateY(20px);
+				transition: all 0.4s ease;
+			}
+
+			#feedback-container.show {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			.feedback-correct {
+				background: linear-gradient(145deg, #d4edda, #c3e6cb);
+				border-left: 5px solid #28a745;
+				color: #155724;
+			}
+
+			.feedback-incorrect {
+				background: linear-gradient(145deg, #f8d7da, #f1b2b2);
+				border-left: 5px solid #dc3545;
+				color: #721c24;
+			}
+
+			#next-btn,
+			#restart-btn {
+				display: block;
+				width: 100%;
+				padding: 18px;
+				background: linear-gradient(145deg, #9b59b6, #8e44ad);
+				color: white;
+				border: none;
+				border-radius: 12px;
+				font-size: 1.2em;
+				font-weight: 600;
+				cursor: pointer;
+				margin-top: 25px;
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+			}
+
+			#next-btn::before,
+			#restart-btn::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: -100%;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(
+					90deg,
+					transparent,
+					rgba(255, 255, 255, 0.2),
+					transparent
+				);
+				transition: left 0.5s;
+			}
+
+			#next-btn:hover,
+			#restart-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+			}
+
+			#next-btn:hover::before,
+			#restart-btn:hover::before {
+				left: 100%;
+			}
+
+			.hidden {
+				display: none !important;
+			}
+
+			#results-container {
+				text-align: center;
+				opacity: 0;
+				animation: slideIn 0.6s ease forwards;
+			}
+
+			#results-container h2 {
+				color: #2c3e50;
+				font-size: 2.2em;
+				margin-bottom: 20px;
+				font-weight: 700;
+			}
+
+			.score-display {
+				font-size: 3em;
+				font-weight: 700;
+				margin: 20px 0;
+				background: linear-gradient(45deg, #4facfe, #00f2fe);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+			}
+
+			.performance-message {
+				font-size: 1.3em;
+				margin: 20px 0;
+				color: #495057;
+				font-weight: 500;
+			}
+
+			.results-breakdown {
+				background: #f8f9fa;
+				border-radius: 12px;
+				padding: 25px;
+				margin: 25px 0;
+				text-align: left;
+			}
+
+			.results-breakdown h3 {
+				color: #2c3e50;
+				margin-bottom: 15px;
+				text-align: center;
+			}
+
+			.breakdown-item {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 10px 0;
+				border-bottom: 1px solid #e9ecef;
+			}
+
+			.breakdown-item:last-child {
+				border-bottom: none;
+			}
+
+			.breakdown-status {
+				font-weight: 600;
+				padding: 4px 12px;
+				border-radius: 20px;
+				font-size: 0.9em;
+			}
+
+			.breakdown-correct {
+				background-color: #d4edda;
+				color: #155724;
+			}
+
+			.breakdown-incorrect {
+				background-color: #f8d7da;
+				color: #721c24;
+			}
+
+			.review-item {
+				margin-bottom: 20px;
+				padding: 15px;
+				border-radius: 8px;
+				background: linear-gradient(145deg, #fff, #f8f9fa);
+				border-left: 4px solid #e74c3c;
+			}
+
+			.review-bias-type {
+				font-weight: 700;
+				color: #e74c3c;
+				font-size: 1.1em;
+				margin-bottom: 8px;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+
+			.review-question {
+				font-style: italic;
+				color: #495057;
+				line-height: 1.5;
+				margin: 0;
+				padding: 10px;
+				background: #f8f9fa;
+				border-radius: 6px;
+				border: 1px solid #dee2e6;
+			}
+
+			/* Accessibility improvements */
+			.visually-hidden {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
+			}
+
+			/* Focus styles */
+			button:focus {
+				outline: 3px solid #4facfe;
+				outline-offset: 2px;
+			}
+
+			/* Loading animation */
+			.loading {
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				border: 3px solid #f3f3f3;
+				border-top: 3px solid #3498db;
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+				margin-left: 10px;
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="quiz-container">
+			<div id="question-screen" role="main">
+				<div
+					class="progress-container"
+					role="progressbar"
+					aria-valuenow="0"
+					aria-valuemin="0"
+					aria-valuemax="100"
+				>
+					<div class="progress-bar" id="progress-bar"></div>
+				</div>
+				<div class="progress-text" id="progress-text">Question 1 of ?</div>
+
+				<h1 id="question-header" class="question-header">
+					Survey Question Bias Identification
+				</h1>
+
+				<div class="question-pair">
+					<div class="question-box biased">
+						<h3>❌ Questionnaire A (Biased)</h3>
+						<p id="question-a" role="text"></p>
+					</div>
+					<div class="question-box improved">
+						<h3>✅ Questionnaire B (Improved)</h3>
+						<p id="question-b" role="text"></p>
+					</div>
+				</div>
+
+				<div class="quiz-question">
+					<span id="bias-question">Which bias is present in Question A?</span>
+				</div>
+
+				<div
+					id="options-container"
+					role="group"
+					aria-labelledby="bias-question"
+				></div>
+
+				<div
+					id="feedback-container"
+					class="hidden"
+					role="alert"
+					aria-live="polite"
+				></div>
+
+				<button id="next-btn" class="hidden">
+					<span>Next Question</span>
+					<span class="visually-hidden">
+						- Continue to question
+						<span id="next-question-number">2</span></span
+					>
+				</button>
+			</div>
+
+			<div id="results-container" class="hidden" role="main">
+				<h2>🎉 Quiz Complete!</h2>
+				<div
+					class="score-display"
+					id="score-display"
+					role="text"
+					aria-label="Final score"
+				>
+					0/8
+				</div>
+				<div class="performance-message" id="performance-message"></div>
+
+				<div class="results-breakdown" id="results-breakdown">
+					<h3>📊 Detailed Results</h3>
+					<div id="breakdown-list"></div>
+				</div>
+
+				<div class="results-breakdown" id="question-review">
+					<h3>📚 Question Review - All Biased Examples</h3>
+					<div id="question-review-list"></div>
+				</div>
+
+				<button id="restart-btn">
+					<span>🔄 Take Quiz Again</span>
+				</button>
+			</div>
+		</div>
+
+		<script>
+			class SurveyBiasQuiz {
+				constructor() {
+					this.fullQuizData = [
+						// New questions based on academic bias taxonomy
+						{
+							questionA:
+								"How often do you exercise: never, rarely, sometimes, or frequently?",
+							questionB:
+								"How many times per week do you engage in physical exercise for at least 30 minutes? (0, 1-2, 3-4, 5-6, 7 or more)",
+							options: ["Complex Question", "Vague Word", "Ambiguous Question"],
+							correctAnswer: "Vague Word",
+							explanation:
+								"Question A uses **vague words** like 'rarely,' 'sometimes,' and 'frequently' that mean different things to different people. Question B provides specific, measurable categories that are clear and unambiguous.",
+						},
+						{
+							questionA:
+								"Do you support the new healthcare reform bill that will increase taxes but provide universal coverage for all Americans?",
+							questionB:
+								"Do you support or oppose the new healthcare reform bill?",
+							options: [
+								"Leading Question",
+								"Technical Jargon",
+								"Double-Barrelled Question",
+							],
+							correctAnswer: "Double-Barrelled Question",
+							explanation:
+								"Question A is a **double-barrelled question** because it asks about two separate issues in one question: tax increases AND universal coverage. Respondents might support one aspect but not the other. Question B focuses on a single, clear issue.",
+						},
+						{
+							questionA:
+								"Given that crime rates have been rising in urban areas, do you think we need more police officers?",
+							questionB:
+								"Do you think your community needs more police officers?",
+							options: ["Framing", "Sensitive Question", "Forced Choice"],
+							correctAnswer: "Framing",
+							explanation:
+								"Question A uses **framing** by presenting potentially biased information ('crime rates have been rising') before asking the question, which can influence the response. Question B asks the same question without the leading context.",
+						},
+						{
+							questionA:
+								"Rate your satisfaction with our customer service: Excellent, Good, or Average",
+							questionB:
+								"Rate your satisfaction with our customer service: Very Satisfied, Satisfied, Neutral, Dissatisfied, Very Dissatisfied",
+							options: ["Missing Interval", "Scale Format", "Forced Choice"],
+							correctAnswer: "Forced Choice",
+							explanation:
+								"Question A demonstrates **forced choice** bias by providing insufficient response categories. There's no option for dissatisfaction, forcing negative responses into 'Average.' Question B provides a balanced scale with appropriate negative options.",
+						},
+						{
+							questionA:
+								"What is your approximate annual income and how satisfied are you with your current job?",
+							questionB: "What is your approximate annual income?",
+							options: [
+								"Sensitive Question",
+								"Double-Barrelled Question",
+								"Complex Question",
+							],
+							correctAnswer: "Double-Barrelled Question",
+							explanation:
+								"Question A is a **double-barrelled question** that asks about two completely different topics: income and job satisfaction. These should be separate questions. Question B focuses on one clear topic.",
+						},
+						{
+							questionA: "Have you ever used illegal drugs in your lifetime?",
+							questionB: "What is your favorite color?",
+							options: ["Vague Word", "Leading Question", "Sensitive Question"],
+							correctAnswer: "Sensitive Question",
+							explanation:
+								"Question A is a **sensitive question** that deals with illegal behavior, which respondents may be reluctant to answer honestly due to social desirability bias or legal concerns. Question B is a neutral, non-threatening question.",
+						},
+						{
+							questionA:
+								"How frequently do you utilize social media platforms for interpersonal communication purposes?",
+							questionB:
+								"How often do you use social media to communicate with friends and family?",
+							options: [
+								"Technical Jargon",
+								"Ambiguous Question",
+								"Complex Question",
+							],
+							correctAnswer: "Technical Jargon",
+							explanation:
+								"Question A uses **technical jargon** and unnecessarily complex language ('utilize,' 'interpersonal communication purposes') that may confuse respondents. Question B uses simple, everyday language that is easier to understand.",
+						},
+						{
+							questionA: "Do you regularly engage in physical activity?",
+							questionB:
+								"In the past 7 days, on how many days did you exercise for at least 30 minutes?",
+							options: [
+								"Belief vs Behavior",
+								"Vague Word",
+								"Ambiguous Question",
+							],
+							correctAnswer: "Ambiguous Question",
+							explanation:
+								"Question A is **ambiguous** because 'regularly' and 'physical activity' are unclear terms that can be interpreted many different ways. Question B provides specific parameters (time frame, duration, clear definition) that eliminate ambiguity.",
+						},
+						// Original question set
+						{
+							questionA:
+								"Do you agree or disagree with this statement: men are better suited emotionally for politics than are most women?",
+							questionB:
+								"Would you say that most men are better suited emotionally for politics than are most women, that men and women are equally suited, or that women are better suited than men in this area?",
+							options: [
+								"Leading Question",
+								"Forced Choice",
+								"Double-Barrelled Question",
+							],
+							correctAnswer: "Forced Choice",
+							explanation:
+								"Question A demonstrates **forced choice** bias by only offering 'agree' or 'disagree' to a loaded premise, with no neutral option. Question B provides a full range of balanced options, including a neutral middle ground.",
+						},
+						{
+							questionA:
+								"Do you agree with Barack Obama's billion dollar bailout of the banking industry?",
+							questionB:
+								"Do you agree with the billion-dollar plan to rescue the banking industry?",
+							options: ["Leading Question", "Framing", "Sensitive Question"],
+							correctAnswer: "Framing",
+							explanation:
+								"Question A uses **framing** by associating the policy with a specific political figure (Barack Obama), which can bias responses based on feelings about the person rather than the policy. Question B removes this framing bias.",
+						},
+						{
+							questionA:
+								"It is estimated that disposable diapers account for less than 2% of the trash in today's landfills. In contrast, beverage containers, third class mail and yard waste are estimated to account for about 21% of trash in landfills. Given this, in your opinion, would it be fair to tax or ban disposable diapers?",
+							questionB:
+								"Do you support, oppose, or are neutral about a tax on disposable diapers to offset the environmental cost?",
+							options: [
+								"Complex Question",
+								"Framing",
+								"Double-Barrelled Question",
+							],
+							correctAnswer: "Framing",
+							explanation:
+								"Question A uses **framing** by providing biased information upfront to persuade the respondent against the tax before asking the question. This leading context manipulates responses. Question B is direct and neutral.",
+						},
+						{
+							questionA:
+								"Did anyone physically attack you in the last six months?",
+							questionB:
+								"Did anyone physically attack you in the last 12 months?",
+							options: [
+								"Ambiguous Question",
+								"Sensitive Question",
+								"Starting Time",
+							],
+							correctAnswer: "Starting Time",
+							explanation:
+								"This demonstrates the importance of **starting time** precision. The 6-month vs 12-month difference will fundamentally change the data collected. Different time frames make results incomparable and can bias findings.",
+						},
+						{
+							questionA:
+								"Does it seem possible to you that the Nazi extermination of the Jews never happened, or do you feel certain that it happened?",
+							questionB:
+								"Does it seem possible or does it seem impossible to you that the Nazi extermination of the Jews never happened?",
+							options: [
+								"Sensitive Question",
+								"Double-Barrelled Question",
+								"Complex Question",
+							],
+							correctAnswer: "Double-Barrelled Question",
+							explanation:
+								"Question A is a **double-barrelled question** that asks about two different concepts: whether it's 'possible it never happened' OR whether you 'feel certain it did.' This complex structure confuses respondents. Question B focuses on one clear proposition.",
+						},
+						{
+							questionA: "Do you practice safe sex?",
+							questionB: "Do you own a car?",
+							options: ["Leading Question", "Vague Word", "Sensitive Question"],
+							correctAnswer: "Sensitive Question",
+							explanation:
+								"Question A is a **sensitive question** dealing with private, personal behavior where there's social pressure to give the 'correct' answer. This can lead to dishonest responses. Question B is a neutral, factual question with no social judgment.",
+						},
+					];
+
+					// Get number of questions from URL parameter
+					this.totalQuestions = this.getQuestionCountFromURL();
+					this.quizData = this.sampleQuestions(
+						this.fullQuizData,
+						this.totalQuestions
+					);
+
+					this.currentQuestionIndex = 0;
+					this.score = 0;
+					this.userAnswers = [];
+					this.elements = this.getElements();
+
+					this.bindEvents();
+					this.startQuiz();
+				}
+
+				getQuestionCountFromURL() {
+					const urlParams = new URLSearchParams(window.location.search);
+					const questionCount = urlParams.get("questions");
+
+					if (questionCount) {
+						const count = parseInt(questionCount, 10);
+						// Validate the parameter
+						if (count > 0 && count <= this.fullQuizData.length) {
+							return count;
+						} else if (count > this.fullQuizData.length) {
+							console.warn(
+								`Requested ${count} questions, but only ${this.fullQuizData.length} available. Using all questions.`
+							);
+							return this.fullQuizData.length;
+						} else {
+							console.warn(
+								`Invalid question count: ${questionCount}. Using default of 6 questions.`
+							);
+							return 6;
+						}
+					}
+
+					// Default to 6 questions if no parameter specified
+					return 6;
+				}
+
+				sampleQuestions(questions, count) {
+					if (count >= questions.length) {
+						return [...questions]; // Return all questions if count is greater than or equal to total
+					}
+
+					// Fisher-Yates shuffle algorithm for random sampling
+					const shuffled = [...questions];
+					for (let i = shuffled.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+					}
+
+					return shuffled.slice(0, count);
+				}
+
+				getElements() {
+					return {
+						questionScreen: document.getElementById("question-screen"),
+						resultsContainer: document.getElementById("results-container"),
+						questionHeader: document.getElementById("question-header"),
+						questionA: document.getElementById("question-a"),
+						questionB: document.getElementById("question-b"),
+						optionsContainer: document.getElementById("options-container"),
+						feedbackContainer: document.getElementById("feedback-container"),
+						nextBtn: document.getElementById("next-btn"),
+						nextQuestionNumber: document.getElementById("next-question-number"),
+						progressBar: document.getElementById("progress-bar"),
+						progressText: document.getElementById("progress-text"),
+						scoreDisplay: document.getElementById("score-display"),
+						performanceMessage: document.getElementById("performance-message"),
+						resultsBreakdown: document.getElementById("results-breakdown"),
+						breakdownList: document.getElementById("breakdown-list"),
+						questionReviewList: document.getElementById("question-review-list"),
+						restartBtn: document.getElementById("restart-btn"),
+					};
+				}
+
+				bindEvents() {
+					this.elements.nextBtn.addEventListener("click", () =>
+						this.nextQuestion()
+					);
+					this.elements.restartBtn.addEventListener("click", () =>
+						this.restartQuiz()
+					);
+
+					// Keyboard navigation
+					document.addEventListener("keydown", (e) => this.handleKeydown(e));
+				}
+
+				handleKeydown(e) {
+					if (e.key === "Enter" || e.key === " ") {
+						const focusedElement = document.activeElement;
+						if (
+							focusedElement.classList.contains("option-btn") &&
+							!focusedElement.disabled
+						) {
+							e.preventDefault();
+							focusedElement.click();
+						}
+					}
+				}
+
+				startQuiz() {
+					this.currentQuestionIndex = 0;
+					this.score = 0;
+					this.userAnswers = [];
+					this.elements.questionScreen.classList.remove("hidden");
+					this.elements.resultsContainer.classList.add("hidden");
+					this.showQuestion();
+				}
+
+				showQuestion() {
+					this.elements.feedbackContainer.classList.add("hidden");
+					this.elements.feedbackContainer.classList.remove("show");
+					this.elements.nextBtn.classList.add("hidden");
+
+					const currentQuestion = this.quizData[this.currentQuestionIndex];
+					const totalQuestions = this.quizData.length;
+					const currentQuestionNum = this.currentQuestionIndex + 1;
+
+					// Update progress
+					const progressPercent =
+						(this.currentQuestionIndex / totalQuestions) * 100;
+					this.elements.progressBar.style.width = `${progressPercent}%`;
+					this.elements.progressText.textContent = `Question ${currentQuestionNum} of ${totalQuestions}`;
+
+					// Update question content
+					this.elements.questionHeader.textContent = `Question Pair ${currentQuestionNum}`;
+					this.elements.questionA.textContent = currentQuestion.questionA;
+					this.elements.questionB.textContent = currentQuestion.questionB;
+
+					// Update next button text
+					if (this.currentQuestionIndex < totalQuestions - 1) {
+						this.elements.nextBtn.innerHTML = `
+                    <span>Next Question</span>
+                    <span class="visually-hidden"> - Continue to question ${
+											currentQuestionNum + 1
+										}</span>
+                `;
+						this.elements.nextQuestionNumber.textContent =
+							currentQuestionNum + 1;
+					} else {
+						this.elements.nextBtn.innerHTML = `
+                    <span>View Results</span>
+                    <span class="visually-hidden"> - See your final score</span>
+                `;
+					}
+
+					this.renderOptions(currentQuestion);
+				}
+
+				renderOptions(question) {
+					this.elements.optionsContainer.innerHTML = "";
+
+					question.options.forEach((option, index) => {
+						const button = document.createElement("button");
+						button.textContent = option;
+						button.className = "option-btn";
+						button.setAttribute("aria-describedby", "bias-question");
+						button.setAttribute("tabindex", "0");
+						button.addEventListener("click", () =>
+							this.selectAnswer(button, option, question)
+						);
+						this.elements.optionsContainer.appendChild(button);
+					});
+				}
+
+				selectAnswer(button, selectedOption, question) {
+					const isCorrect = selectedOption === question.correctAnswer;
+
+					// Store user's answer
+					this.userAnswers.push({
+						question: `Question ${this.currentQuestionIndex + 1}`,
+						selected: selectedOption,
+						correct: question.correctAnswer,
+						isCorrect: isCorrect,
+					});
+
+					if (isCorrect) {
+						this.score++;
+						button.classList.add("correct");
+						this.showFeedback(true, question.explanation);
+					} else {
+						button.classList.add("incorrect");
+						this.showFeedback(
+							false,
+							question.explanation,
+							question.correctAnswer
+						);
+						this.highlightCorrectAnswer(question.correctAnswer);
+					}
+
+					this.disableAllOptions();
+					this.elements.nextBtn.classList.remove("hidden");
+					this.elements.nextBtn.focus();
+				}
+
+				showFeedback(isCorrect, explanation, correctAnswer = null) {
+					const container = this.elements.feedbackContainer;
+
+					if (isCorrect) {
+						container.innerHTML = `
+                    <strong>🎉 Correct!</strong><br><br>
+                    ${this.formatExplanation(explanation)}
+                `;
+						container.className = "feedback-correct show";
+					} else {
+						container.innerHTML = `
+                    <strong>❌ Not quite.</strong> The best answer is <strong>${correctAnswer}</strong>.<br><br>
+                    ${this.formatExplanation(explanation)}
+                `;
+						container.className = "feedback-incorrect show";
+					}
+
+					container.classList.remove("hidden");
+				}
+
+				formatExplanation(explanation) {
+					return explanation
+						.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+						.replace(/\*(.*?)\*/g, "<em>$1</em>");
+				}
+
+				highlightCorrectAnswer(correctAnswer) {
+					Array.from(this.elements.optionsContainer.children).forEach((btn) => {
+						if (btn.textContent === correctAnswer) {
+							btn.classList.add("correct");
+						}
+					});
+				}
+
+				disableAllOptions() {
+					Array.from(this.elements.optionsContainer.children).forEach((btn) => {
+						btn.disabled = true;
+					});
+				}
+
+				nextQuestion() {
+					this.currentQuestionIndex++;
+					if (this.currentQuestionIndex < this.quizData.length) {
+						this.showQuestion();
+					} else {
+						this.showResults();
+					}
+				}
+
+				showResults() {
+					this.elements.questionScreen.classList.add("hidden");
+					this.elements.resultsContainer.classList.remove("hidden");
+
+					const totalQuestions = this.quizData.length;
+					const percentage = Math.round((this.score / totalQuestions) * 100);
+
+					// Update score display
+					this.elements.scoreDisplay.textContent = `${this.score}/${totalQuestions}`;
+					this.elements.scoreDisplay.setAttribute(
+						"aria-label",
+						`You scored ${this.score} out of ${totalQuestions} questions correctly`
+					);
+
+					// Show performance message
+					this.elements.performanceMessage.textContent =
+						this.getPerformanceMessage(percentage);
+
+					// Show detailed breakdown
+					this.showResultsBreakdown();
+
+					// Show question review
+					this.showQuestionReview();
+
+					// Update progress bar to 100%
+					this.elements.progressBar.style.width = "100%";
+				}
+
+				getPerformanceMessage(percentage) {
+					if (percentage >= 90)
+						return "🌟 Outstanding! You're a survey bias expert!";
+					if (percentage >= 80)
+						return "🎯 Excellent work! You have a great understanding of survey biases.";
+					if (percentage >= 70)
+						return "👍 Good job! You identified most biases correctly.";
+					if (percentage >= 60)
+						return "📚 Not bad! Consider reviewing survey methodology principles.";
+					return "🤔 This is tricky stuff! Try again to improve your understanding.";
+				}
+
+				showResultsBreakdown() {
+					const breakdownHTML = this.userAnswers
+						.map(
+							(answer) => `
+                <div class="breakdown-item">
+                    <span>${answer.question}</span>
+                    <span class="breakdown-status ${
+											answer.isCorrect
+												? "breakdown-correct"
+												: "breakdown-incorrect"
+										}">
+                        ${answer.isCorrect ? "✓ Correct" : "✗ Incorrect"}
+                    </span>
+                </div>
+            `
+						)
+						.join("");
+
+					this.elements.breakdownList.innerHTML = breakdownHTML;
+				}
+
+				showQuestionReview() {
+					const reviewHTML = this.quizData
+						.map(
+							(questionData, index) => `
+                <div class="review-item">
+                    <div class="review-bias-type">
+                        <span>❌</span>
+                        <span>Question ${index + 1}: ${
+								questionData.correctAnswer
+							}</span>
+                    </div>
+                    <p class="review-question">"${questionData.questionA}"</p>
+                </div>
+            `
+						)
+						.join("");
+
+					this.elements.questionReviewList.innerHTML = reviewHTML;
+				}
+
+				restartQuiz() {
+					// Add a small delay for better UX
+					this.elements.restartBtn.innerHTML =
+						'<span>🔄 Restarting...</span><span class="loading"></span>';
+
+					setTimeout(() => {
+						this.elements.restartBtn.innerHTML =
+							"<span>🔄 Take Quiz Again</span>";
+						// Re-sample questions for a fresh experience
+						this.quizData = this.sampleQuestions(
+							this.fullQuizData,
+							this.totalQuestions
+						);
+						this.startQuiz();
+					}, 800);
+				}
+
+				// Utility method to generate URLs with different question counts (for instructor use)
+				static generateQuizURL(questionCount) {
+					const baseURL = window.location.origin + window.location.pathname;
+					return `${baseURL}?questions=${questionCount}`;
+				}
+			}
+
+			// Initialize the quiz when the page loads
+			document.addEventListener("DOMContentLoaded", () => {
+				new SurveyBiasQuiz();
+			});
+		</script>
+	</body>
+</html>
