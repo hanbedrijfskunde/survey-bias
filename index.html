@@ -692,9 +692,8 @@
 						},
 						{
 							questionA:
-								"Does it seem possible to you that the Nazi extermination of the Jews never happened, or do you feel certain that it happened?",
-							questionB:
-								"Does it seem possible or does it seem impossible to you that the Nazi extermination of the Jews never happened?",
+								"Are you satisfied with your current job and do you think you are paid fairly?",
+							questionB: "Are you satisfied with your current job?",
 							options: [
 								"Sensitive Question",
 								"Double-Barrelled Question",
@@ -702,7 +701,20 @@
 							],
 							correctAnswer: "Double-Barrelled Question",
 							explanation:
-								"Question A is a **double-barrelled question** that asks about two different concepts: whether it's 'possible it never happened' OR whether you 'feel certain it did.' This complex structure confuses respondents. Question B focuses on one clear proposition.",
+								"Question A is a **double-barrelled question** that asks about two separate issues in one question: job satisfaction AND fair compensation. A respondent might be satisfied with their job duties but unhappy with their pay, or vice versa. Question B focuses on one clear aspect.",
+						},
+						{
+							questionA:
+								"Does it seem possible or does it seem impossible to you that the Nazi extermination of the Jews never happened?",
+							questionB: "Do you believe the Holocaust happened?",
+							options: [
+								"Sensitive Question",
+								"Double-Barrelled Question",
+								"Complex Question",
+							],
+							correctAnswer: "Complex Question",
+							explanation:
+								"Question A is a **complex question** due to its confusing double negation ('impossible...never happened') and convoluted sentence structure that makes it difficult for respondents to parse and understand what they're actually being asked. Question B is straightforward and clear, asking a simple yes/no question about a historical event.",
 						},
 						{
 							questionA: "Do you practice safe sex?",
