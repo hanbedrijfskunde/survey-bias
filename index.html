@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Survey Bias Quiz - Enhanced</title>
+		<title>Quiz Enquête-bias - Verbeterde Versie</title>
 		<style>
 			:root {
 				--primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -50,6 +50,24 @@
 				position: relative;
 				overflow: hidden;
 				transition: all 0.3s ease;
+			}
+
+			#intro-screen {
+				text-align: center;
+			}
+
+			#intro-screen h2 {
+				font-size: 2em;
+				color: var(--text-dark);
+				margin-bottom: 20px;
+			}
+
+			#intro-screen p {
+				font-size: 1.1em;
+				color: var(--text-medium);
+				line-height: 1.7;
+				max-width: 700px;
+				margin: 0 auto 20px;
 			}
 
 			.progress-container {
@@ -273,12 +291,14 @@
 				color: #721c24;
 			}
 
+			#start-btn,
 			#next-btn,
 			#restart-btn,
 			#download-btn {
-				display: block;
-				width: 100%;
-				padding: 18px;
+				display: inline-block;
+				width: auto;
+				min-width: 220px;
+				padding: 18px 30px;
 				background: var(--action-gradient);
 				color: white;
 				border: none;
@@ -291,6 +311,15 @@
 				position: relative;
 				overflow: hidden;
 			}
+
+			#next-btn,
+			#restart-btn,
+			#download-btn {
+				display: block;
+				width: 100%;
+			}
+
+			#start-btn::before,
 			#next-btn::before,
 			#restart-btn::before,
 			#download-btn::before {
@@ -308,12 +337,16 @@
 				);
 				transition: left 0.5s;
 			}
+
+			#start-btn:hover,
 			#next-btn:hover,
 			#restart-btn:hover,
 			#download-btn:hover {
 				transform: translateY(-2px);
 				box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
 			}
+
+			#start-btn:hover::before,
 			#next-btn:hover::before,
 			#restart-btn:hover::before,
 			#download-btn:hover::before {
@@ -419,7 +452,7 @@
 				border: 1px solid var(--border-color);
 			}
 
-			/* --- Styles for the new Reference Guide --- */
+			/* --- Stijlen voor de Referentiegids --- */
 			.bias-main-category > h4 {
 				font-size: 1.4em;
 				color: var(--text-dark);
@@ -450,7 +483,7 @@
 				line-height: 1.5;
 			}
 
-			/* --- Accessibility & Utility --- */
+			/* --- Toegankelijkheid & Hulpprogramma's --- */
 			.visually-hidden {
 				position: absolute;
 				width: 1px;
@@ -482,7 +515,7 @@
 				}
 			}
 
-			/* --- Print Styles --- */
+			/* --- Print Stijlen --- */
 			@media print {
 				body {
 					background: none;
@@ -498,6 +531,7 @@
 					padding: 0;
 					max-width: 100%;
 				}
+				#intro-screen,
 				#question-screen {
 					display: none;
 				}
@@ -538,7 +572,31 @@
 	</head>
 	<body>
 		<div id="quiz-container">
-			<div id="question-screen" role="main">
+			<div id="intro-screen">
+				<h2>Welkom bij de Enquête-bias Quiz</h2>
+				<p>
+					Goede vragen stellen is de basis van betrouwbaar onderzoek. Onbewuste
+					vooroordelen (biases) in je vragen kunnen de antwoorden van
+					respondenten sturen en jouw resultaten onbruikbaar maken. Het
+					herkennen van deze valkuilen is een cruciale vaardigheid voor elke
+					onderzoeker, student of professional.
+				</p>
+				<p>
+					In deze quiz krijg je steeds twee versies van een vraag te zien: een
+					bevooroordeelde versie (Vraag A) en een verbeterde, neutrale versie
+					(Vraag B). Jouw taak is om het specifieke type bias in Vraag A te
+					identificeren.
+				</p>
+				<p>
+					Na elke vraag krijg je direct feedback. Aan het einde van de quiz
+					ontvang je een overzicht van je score en een complete referentiegids.
+					Zo leer je in de praktijk hoe je betere, objectievere vragenlijsten
+					opstelt.
+				</p>
+				<button id="start-btn">Start de Quiz</button>
+			</div>
+
+			<div id="question-screen" role="main" class="hidden">
 				<div
 					class="progress-container no-print"
 					role="progressbar"
@@ -548,25 +606,25 @@
 				>
 					<div class="progress-bar" id="progress-bar"></div>
 				</div>
-				<p class="progress-text no-print" id="progress-text">Question 1 of ?</p>
+				<p class="progress-text no-print" id="progress-text">Vraag 1 van ?</p>
 
 				<h1 id="question-header" class="question-header">
-					Survey Question Bias Identification
+					Identificatie van Enquêtevraag-bias
 				</h1>
 
 				<div class="question-pair">
 					<div class="question-box biased">
-						<h3>❌ Questionnaire A (Biased)</h3>
+						<h3>❌ Vraag A (Bevooroordeeld)</h3>
 						<p id="question-a" role="text"></p>
 					</div>
 					<div class="question-box improved">
-						<h3>✅ Questionnaire B (Improved)</h3>
+						<h3>✅ Vraag B (Verbeterd)</h3>
 						<p id="question-b" role="text"></p>
 					</div>
 				</div>
 
 				<div class="quiz-question">
-					<span id="bias-question">Which bias is present in Question A?</span>
+					<span id="bias-question">Welke bias is aanwezig in Vraag A?</span>
 				</div>
 
 				<div
@@ -583,455 +641,564 @@
 				></div>
 
 				<button id="next-btn" class="hidden no-print">
-					<span>Next Question</span>
+					<span>Volgende Vraag</span>
 					<span class="visually-hidden"
-						>- Continue to question
-						<span id="next-question-number">2</span></span
+						>- Ga door naar vraag <span id="next-question-number">2</span></span
 					>
 				</button>
 			</div>
 
 			<div id="results-container" class="hidden" role="main">
-				<h2>🎉 Quiz Complete!</h2>
+				<h2>🎉 Quiz Voltooid!</h2>
 				<div
 					class="score-display"
 					id="score-display"
 					role="text"
-					aria-label="Final score"
+					aria-label="Eindscore"
 				>
 					0/8
 				</div>
 				<p class="performance-message" id="performance-message"></p>
 
 				<div class="results-breakdown" id="results-breakdown">
-					<h3>📊 Detailed Results</h3>
+					<h3>📊 Gedetailleerde Resultaten</h3>
 					<div id="breakdown-list"></div>
 				</div>
 
 				<div class="results-breakdown" id="question-review">
-					<h3>📚 Question Review - All Biased Examples</h3>
+					<h3>📚 Vragenoverzicht - Alle Bevooroordeelde Voorbeelden</h3>
 					<div id="question-review-list"></div>
 				</div>
 
-				<!-- --- UPDATED REFERENCE GUIDE --- -->
+				<!-- --- BIAS REFERENTIEGIDS --- -->
 				<div class="results-breakdown" id="bias-reference">
-					<h3>📖 Survey Bias Reference Guide</h3>
+					<h3>📖 Referentiegids Enquête-bias</h3>
 					<div id="bias-reference-content">
 						<div class="bias-main-category">
-							<h4>1. Question Design</h4>
+							<h4>1. Vraagontwerp</h4>
 							<div class="bias-sub-category">
-								<h5>Problems with wording</h5>
+								<h5>Problemen met bewoording</h5>
 								<div class="bias-item">
-									<strong>Ambiguous question:</strong> Leads respondents to
-									understand the question differently than was intended.
+									<strong>Dubbelzinnige vraag:</strong> Leidt ertoe dat
+									respondenten de vraag anders interpreteren dan bedoeld.
 								</div>
 								<div class="bias-item">
-									<strong>Complex question:</strong> Questions that are too
-									long, formal, or use confusing structures (e.g., neither/nor).
+									<strong>Complexe vraag:</strong> Vragen die te lang, formeel
+									of verwarrend gestructureerd zijn (bijv. noch/noch).
 								</div>
 								<div class="bias-item">
-									<strong>Double-barrelled question:</strong> Two or more
-									questions are asked as one.
+									<strong>Twee-in-één vraag (double-barrelled):</strong> Twee of
+									meer vragen worden als één gesteld.
 								</div>
 								<div class="bias-item">
-									<strong>Short question:</strong> May be less accurately
-									answered than longer questions with context.
+									<strong>Korte vraag:</strong> Kan minder nauwkeurig worden
+									beantwoord dan langere vragen met context.
 								</div>
 								<div class="bias-item">
-									<strong>Technical jargon:</strong> Use of professional terms
-									not understood by the public.
+									<strong>Technisch jargon:</strong> Gebruik van vaktermen die
+									het grote publiek niet begrijpt.
 								</div>
 								<div class="bias-item">
-									<strong>Uncommon word:</strong> Difficult words should be
-									avoided in favor of simpler alternatives.
+									<strong>Ongebruikelijk woord:</strong> Moeilijke woorden
+									moeten worden vermeden ten gunste van eenvoudigere
+									alternatieven.
 								</div>
 								<div class="bias-item">
-									<strong>Vague word:</strong> Undefined terms (e.g., regularly,
-									occasionally) encourage vague answers.
+									<strong>Vaag woord:</strong> Niet-gedefinieerde termen (bijv.
+									regelmatig, af en toe) moedigen vage antwoorden aan.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Missing or inadequate data for intended purpose</h5>
+								<h5>
+									Ontbrekende of inadequate gegevens voor het beoogde doel
+								</h5>
 								<div class="bias-item">
-									<strong>Belief vs behavior:</strong> Asking about a
-									hypothetical belief can yield different answers than asking
-									about actual behavior.
+									<strong>Overtuiging vs. gedrag:</strong> Vragen naar een
+									hypothetische overtuiging kan andere antwoorden opleveren dan
+									vragen naar feitelijk gedrag.
 								</div>
 								<div class="bias-item">
-									<strong>Starting time:</strong> Failure to identify a common
-									starting time for exposure or illness.
+									<strong>Begintijd:</strong> Het niet specificeren van een
+									gemeenschappelijke begintijd voor blootstelling of ziekte.
 								</div>
 								<div class="bias-item">
-									<strong>Data degradation:</strong> Collecting data in
-									categories (degraded) instead of as continuous data at the
-									source.
+									<strong>Gegevensdegradatie:</strong> Gegevens verzamelen in
+									categorieën (gedegradeerd) in plaats van als continue data bij
+									de bron.
 								</div>
 								<div class="bias-item">
-									<strong>Insensitive measure:</strong> The measurement scale
-									lacks the power to detect significant differences.
-								</div>
-							</div>
-							<div class="bias-sub-category">
-								<h5>Faulty scale</h5>
-								<div class="bias-item">
-									<strong>Forced choice:</strong> Too few categories force
-									respondents to choose imprecisely (e.g., no "don't know"
-									option).
-								</div>
-								<div class="bias-item">
-									<strong>Missing interval:</strong> Gaps in response choices
-									cause confusion.
-								</div>
-								<div class="bias-item">
-									<strong>Overlapping interval:</strong> Response categories
-									overlap, confusing respondents at the boundaries.
-								</div>
-								<div class="bias-item">
-									<strong>Scale format:</strong> An odd vs. even number of
-									categories can produce different results (neutral vs. forced
-									side).
+									<strong>Ongevoelige meting:</strong> De meetschaal mist de
+									kracht om significante verschillen te detecteren.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Leading questions</h5>
+								<h5>Foutieve schaal</h5>
 								<div class="bias-item">
-									<strong>Framing:</strong> Presenting context in a way that
-									leads respondents to an inaccurate answer.
+									<strong>Gedwongen keuze:</strong> Te weinig categorieën
+									dwingen respondenten tot een onnauwkeurige keuze (bijv. geen
+									"weet niet"-optie).
 								</div>
 								<div class="bias-item">
-									<strong>Leading question:</strong> Wording guides or directs
-									respondents toward a specific answer.
+									<strong>Ontbrekend interval:</strong> Gaten in de
+									antwoordkeuzes veroorzaken verwarring.
 								</div>
 								<div class="bias-item">
-									<strong>Mind-set:</strong> The respondent's perception is
-									affected by the context of previous questions.
-								</div>
-							</div>
-							<div class="bias-sub-category">
-								<h5>Intrusiveness</h5>
-								<div class="bias-item">
-									<strong>Reporting (self-report response):</strong> Respondents
-									may selectively suppress information.
+									<strong>Overlappend interval:</strong> Antwoordcategorieën
+									overlappen, wat respondenten op de grenzen verwart.
 								</div>
 								<div class="bias-item">
-									<strong>Sensitive question:</strong> Questions on private
-									matters (e.g., income, age) may elicit inaccurate answers.
+									<strong>Schaalformaat:</strong> Een oneven vs. even aantal
+									categorieën kan verschillende resultaten opleveren (neutraal
+									vs. gedwongen kant).
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Inconsistency</h5>
+								<h5>Sturende vragen</h5>
 								<div class="bias-item">
-									<strong>Case definition:</strong> Using different definitions
-									for cases over time or across regions.
+									<strong>Framing:</strong> Context presenteren op een manier
+									die respondenten naar een onjuist antwoord leidt.
 								</div>
 								<div class="bias-item">
-									<strong>Change of scale:</strong> If the measurement scale
-									changes in different surveys, results are not comparable.
+									<strong>Sturende vraag:</strong> Bewoording die respondenten
+									naar een specifiek antwoord leidt of stuurt.
 								</div>
 								<div class="bias-item">
-									<strong>Change of wording:</strong> If precise wording
-									changes, results may not be comparable.
-								</div>
-								<div class="bias-item">
-									<strong>Diagnostic vogue:</strong> The same illness may
-									receive different diagnostic labels at different points in
-									space or time.
-								</div>
-							</div>
-						</div>
-						<div class="bias-main-category">
-							<h4>2. Questionnaire Design</h4>
-							<div class="bias-sub-category">
-								<h5>Formatting problem</h5>
-								<div class="bias-item">
-									<strong>Horizontal response format:</strong> Can cause
-									confusion due to poor spacing.
-								</div>
-								<div class="bias-item">
-									<strong>Juxtaposed scale:</strong> Asking for multiple ratings
-									side-by-side may elicit different responses than separate
-									scales.
-								</div>
-								<div class="bias-item">
-									<strong>Left/Right alignment:</strong> Alignment of response
-									choices can produce a bias.
+									<strong>Mind-set:</strong> De perceptie van de respondent
+									wordt beïnvloed door de context van eerdere vragen.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Questionnaire too long</h5>
+								<h5>Intrusiviteit</h5>
 								<div class="bias-item">
-									<strong>No/Yes-saying:</strong> Respondents tend to answer all
-									no or all yes to a battery of questions.
+									<strong>Rapportage (zelfrapportage):</strong> Respondenten
+									kunnen selectief informatie achterhouden.
 								</div>
 								<div class="bias-item">
-									<strong>Open question:</strong> Can result in data of
-									differential quality due to recording differences.
-								</div>
-								<div class="bias-item">
-									<strong>Response fatigue:</strong> Long questionnaires can
-									induce fatigue and result in inaccurate answers.
+									<strong>Gevoelige vraag:</strong> Vragen over privézaken
+									(bijv. inkomen, leeftijd) kunnen onnauwkeurige antwoorden
+									uitlokken.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Flawed questionnaire structure</h5>
+								<h5>Inconsistentie</h5>
 								<div class="bias-item">
-									<strong>Skipping question:</strong> Logical errors in the flow
-									(skip-logic) can lead to loss of information.
+									<strong>Casusdefinitie:</strong> Gebruik van verschillende
+									definities voor gevallen in de tijd of tussen regio's.
+								</div>
+								<div class="bias-item">
+									<strong>Verandering van schaal:</strong> Als de meetschaal in
+									verschillende enquêtes verandert, zijn de resultaten niet
+									vergelijkbaar.
+								</div>
+								<div class="bias-item">
+									<strong>Verandering van bewoording:</strong> Als de precieze
+									bewoording verandert, zijn de resultaten mogelijk niet
+									vergelijkbaar.
+								</div>
+								<div class="bias-item">
+									<strong>Diagnostische mode:</strong> Dezelfde ziekte kan op
+									verschillende momenten of plaatsen verschillende diagnostische
+									labels krijgen.
 								</div>
 							</div>
 						</div>
 						<div class="bias-main-category">
-							<h4>3. Administration of Questionnaire</h4>
+							<h4>2. Vragenlijstontwerp</h4>
 							<div class="bias-sub-category">
-								<h5>Interviewer not objective</h5>
+								<h5>Opmaakprobleem</h5>
 								<div class="bias-item">
-									<strong>Interviewer:</strong> Bias from subconscious or
-									conscious gathering of selective data.
+									<strong>Horizontaal antwoordformaat:</strong> Kan verwarring
+									veroorzaken door slechte spatiëring.
 								</div>
 								<div class="bias-item">
-									<strong>Nonblinding:</strong> An interviewer not blind to the
-									study hypothesis may gather selective data.
+									<strong>Naast elkaar geplaatste schaal:</strong> Vragen om
+									meerdere beoordelingen naast elkaar kan andere reacties
+									uitlokken dan afzonderlijke schalen.
+								</div>
+								<div class="bias-item">
+									<strong>Links/Rechts uitlijning:</strong> Uitlijning van
+									antwoordkeuzes kan een bias veroorzaken.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Respondent's subconscious reaction</h5>
+								<h5>Vragenlijst te lang</h5>
 								<div class="bias-item">
-									<strong>End aversion (central tendency):</strong> Respondents
-									tend to avoid the extreme ends of scales.
+									<strong>Nee/Ja-zeggen:</strong> Respondenten neigen ertoe om
+									op een reeks vragen allemaal nee of allemaal ja te antwoorden.
+								</div>
+								<div class="bias-item">
+									<strong>Open vraag:</strong> Kan resulteren in gegevens van
+									wisselende kwaliteit door verschillen in notatie.
+								</div>
+								<div class="bias-item">
+									<strong>Antwoordmoeheid:</strong> Lange vragenlijsten kunnen
+									vermoeidheid veroorzaken en resulteren in onnauwkeurige
+									antwoorden.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Respondent's conscious reaction</h5>
+								<h5>Foutieve vragenlijststructuur</h5>
 								<div class="bias-item">
-									<strong>Faking bad:</strong> Respondents try to appear sick to
-									qualify for support.
+									<strong>Overslaan van vraag:</strong> Logische fouten in de
+									flow (skip-logica) kunnen leiden tot verlies van informatie.
+								</div>
+							</div>
+						</div>
+						<div class="bias-main-category">
+							<h4>3. Afname van de Vragenlijst</h4>
+							<div class="bias-sub-category">
+								<h5>Interviewer niet objectief</h5>
+								<div class="bias-item">
+									<strong>Interviewer:</strong> Bias door onbewust of bewust
+									verzamelen van selectieve gegevens.
 								</div>
 								<div class="bias-item">
-									<strong>Faking good (social desirability):</strong>
-									Respondents alter responses in the direction they perceive is
-									desired.
+									<strong>Niet-blinderen:</strong> Een interviewer die niet
+									blind is voor de studiehypothese kan selectieve gegevens
+									verzamelen.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Respondent's learning</h5>
+								<h5>Onbewuste reactie van de respondent</h5>
 								<div class="bias-item">
-									<strong>Learning:</strong> Answering prior questions affects
-									subsequent answers.
-								</div>
-								<div class="bias-item">
-									<strong>Hypothesis guessing:</strong> Respondents alter
-									answers when they think they know the study's hypothesis.
+									<strong>Eindvermijding (centrale tendens):</strong>
+									Respondenten neigen ertoe de extreme uiteinden van schalen te
+									vermijden.
 								</div>
 							</div>
 							<div class="bias-sub-category">
-								<h5>Respondent's inaccurate recall</h5>
+								<h5>Bewuste reactie van de respondent</h5>
 								<div class="bias-item">
-									<strong>Primacy and recency:</strong> Respondents may choose
-									answers differently depending on questionnaire type
-									(mail/in-person).
+									<strong>Slecht faken:</strong> Respondenten proberen ziek te
+									lijken om in aanmerking te komen voor ondersteuning.
 								</div>
 								<div class="bias-item">
-									<strong>Proxy respondent:</strong> Soliciting information from
-									proxies (e.g., spouse) can result in inaccurate data.
+									<strong>Goed faken (sociale wenselijkheid):</strong>
+									Respondenten passen antwoorden aan in de richting die zij als
+									gewenst beschouwen.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Leren van de respondent</h5>
+								<div class="bias-item">
+									<strong>Leren:</strong> Het beantwoorden van eerdere vragen
+									beïnvloedt latere antwoorden.
 								</div>
 								<div class="bias-item">
-									<strong>Recall:</strong> Differences in accuracy of recall
-									prior to major events.
+									<strong>Hypothese raden:</strong> Respondenten passen
+									antwoorden aan als ze denken de hypothese van de studie te
+									kennen.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Onnauwkeurige herinnering van de respondent</h5>
+								<div class="bias-item">
+									<strong>Primacy en recency:</strong> Respondenten kunnen
+									antwoorden anders kiezen afhankelijk van het type vragenlijst
+									(post/persoonlijk).
 								</div>
 								<div class="bias-item">
-									<strong>Telescope:</strong> Recalling a distant event as
-									happening more recently.
+									<strong>Proxy-respondent:</strong> Informatie vragen aan
+									proxies (bijv. echtgenoot) kan resulteren in onnauwkeurige
+									gegevens.
+								</div>
+								<div class="bias-item">
+									<strong>Herinnering (recall):</strong> Verschillen in de
+									nauwkeurigheid van herinneringen aan gebeurtenissen
+									voorafgaand aan belangrijke momenten.
+								</div>
+								<div class="bias-item">
+									<strong>Telescoop-effect:</strong> Een verre gebeurtenis
+									herinneren als recenter gebeurd.
 								</div>
 							</div>
 						</div>
 					</div>
 					<p class="bias-citation">
-						<strong>Source:</strong> Choi, B. C. K., & Pak, A. W. P. (2005,
-						January). A catalog of biases in questionnaires.
+						<strong>Bron:</strong> Choi, B. C. K., & Pak, A. W. P. (2005,
+						Januari). A catalog of biases in questionnaires.
 						<em>Preventing Chronic Disease, 2</em>(1), A13.
 						http://www.cdc.gov/pcd/issues/2005/jan/04_0050.htm
 					</p>
 				</div>
 
 				<button id="download-btn" class="no-print">
-					<span>📄 Download Results as PDF</span>
+					<span>📄 Resultaten Downloaden als PDF</span>
 				</button>
 
 				<button id="restart-btn" class="no-print">
-					<span>🔄 Take Quiz Again</span>
+					<span>🔄 Doe de Quiz Opnieuw</span>
 				</button>
 			</div>
 		</div>
 
 		<script>
-			// --- YOUR ORIGINAL QUIZ CONTENT ---
+			// --- QUIZ DATA IN HET NEDERLANDS (BIJGEWERKT) ---
 			const FULL_QUIZ_DATA = [
 				{
-					questionA:
-						"How often do you exercise: never, rarely, sometimes, or frequently?",
+					questionA: "Hoe vaak sport u: nooit, zelden, soms, of vaak?",
 					questionB:
-						"How many times per week do you engage in physical exercise for at least 30 minutes? (0, 1-2, 3-4, 5-6, 7 or more)",
-					options: ["Complex Question", "Vague Word", "Ambiguous Question"],
-					correctAnswer: "Vague Word",
+						"Hoeveel keer per week doet u minstens 30 minuten aan lichaamsbeweging? (0, 1-2, 3-4, 5-6, 7 of meer)",
+					options: ["Complexe Vraag", "Vaag Woord", "Twee-in-één Vraag"],
+					correctAnswer: "Vaag Woord",
 					explanation:
-						"Question A uses **vague words** like 'rarely,' 'sometimes,' and 'frequently' that mean different things to different people. Question B provides specific, measurable categories that are clear and unambiguous.",
+						"Vraag A gebruikt **vage woorden** zoals 'zelden', 'soms' en 'vaak' die voor verschillende mensen iets anders betekenen. Vraag B geeft specifieke, meetbare categorieën die duidelijk en ondubbelzinnig zijn.",
 				},
 				{
 					questionA:
-						"Do you support the new healthcare reform bill that will increase taxes but provide universal coverage for all Americans?",
-					questionB: "Do you support or oppose the new healthcare reform bill?",
-					options: [
-						"Leading Question",
-						"Technical Jargon",
-						"Double-Barrelled Question",
-					],
-					correctAnswer: "Double-Barrelled Question",
+						"Steunt u het nieuwe zorgstelsel dat de belastingen zal verhogen maar universele dekking voor alle Nederlanders zal bieden?",
+					questionB: "Bent u voor of tegen het nieuwe zorgstelsel?",
+					options: ["Sturende Vraag", "Technisch Jargon", "Twee-in-één Vraag"],
+					correctAnswer: "Twee-in-één Vraag",
 					explanation:
-						"Question A is a **double-barrelled question** because it asks about two separate issues in one question: tax increases AND universal coverage. Respondents might support one aspect but not the other. Question B focuses on a single, clear issue.",
+						"Vraag A is een **twee-in-één vraag** (double-barrelled) omdat het over twee aparte onderwerpen in één vraag gaat: belastingverhoging EN universele dekking. Respondenten kunnen het ene aspect steunen, maar het andere niet. Vraag B richt zich op één duidelijk onderwerp.",
 				},
 				{
 					questionA:
-						"Given that crime rates have been rising in urban areas, do you think we need more police officers?",
-					questionB: "Do you think your community needs more police officers?",
-					options: ["Framing", "Sensitive Question", "Forced Choice"],
+						"Gezien de stijgende misdaadcijfers in stedelijke gebieden, vindt u dat we meer politieagenten nodig hebben?",
+					questionB:
+						"Vindt u dat uw gemeenschap meer politieagenten nodig heeft?",
+					options: ["Framing", "Gevoelige Vraag", "Gedwongen Keuze"],
 					correctAnswer: "Framing",
 					explanation:
-						"Question A uses **framing** by presenting potentially biased information ('crime rates have been rising') before asking the question, which can influence the response. Question B asks the same question without the leading context.",
+						"Vraag A gebruikt **framing** door potentieel bevooroordeelde informatie te presenteren ('misdaadcijfers stijgen') voordat de vraag wordt gesteld, wat de reactie kan beïnvloeden. Vraag B stelt dezelfde vraag zonder de sturende context.",
 				},
 				{
 					questionA:
-						"Rate your satisfaction with our customer service: Excellent, Good, or Average",
+						"Beoordeel uw tevredenheid over onze klantenservice: Uitstekend, Goed, of Gemiddeld",
 					questionB:
-						"Rate your satisfaction with our customer service: Very Satisfied, Satisfied, Neutral, Dissatisfied, Very Dissatisfied",
-					options: ["Missing Interval", "Scale Format", "Forced Choice"],
-					correctAnswer: "Forced Choice",
+						"Beoordeel uw tevredenheid over onze klantenservice: Zeer Tevreden, Tevreden, Neutraal, Ontevreden, Zeer Ontevreden",
+					options: ["Ontbrekend Interval", "Schaalformaat", "Gedwongen Keuze"],
+					correctAnswer: "Gedwongen Keuze",
 					explanation:
-						"Question A demonstrates **forced choice** bias by providing insufficient response categories. There's no option for dissatisfaction, forcing negative responses into 'Average.' Question B provides a balanced scale with appropriate negative options.",
+						"Vraag A toont **gedwongen keuze**-bias door onvoldoende antwoordcategorieën te bieden. Er is geen optie voor ontevredenheid, waardoor negatieve reacties in 'Gemiddeld' worden gedwongen. Vraag B biedt een gebalanceerde schaal met passende negatieve opties.",
 				},
 				{
 					questionA:
-						"What is your approximate annual income and how satisfied are you with your current job?",
-					questionB: "What is your approximate annual income?",
+						"Wat is uw geschatte jaarinkomen en hoe tevreden bent u met uw huidige baan?",
+					questionB: "Wat is uw geschatte jaarinkomen?",
+					options: ["Gevoelige Vraag", "Twee-in-één Vraag", "Complexe Vraag"],
+					correctAnswer: "Twee-in-één Vraag",
+					explanation:
+						"Vraag A is een **twee-in-één vraag** die over twee totaal verschillende onderwerpen gaat: inkomen en baantevredenheid. Dit zouden aparte vragen moeten zijn. Vraag B richt zich op één duidelijk onderwerp.",
+				},
+				{
+					questionA: "Heeft u ooit in uw leven illegale drugs gebruikt?",
+					questionB: "Wat is uw favoriete kleur?",
+					options: ["Vaag Woord", "Sturende Vraag", "Gevoelige Vraag"],
+					correctAnswer: "Gevoelige Vraag",
+					explanation:
+						"Vraag A is een **gevoelige vraag** die gaat over illegaal gedrag, waar respondenten mogelijk terughoudend zijn om eerlijk te antwoorden vanwege sociale wenselijkheid of juridische zorgen. Vraag B is een neutrale, niet-bedreigende vraag.",
+				},
+				{
+					questionA:
+						"Hoe frequent maakt u gebruik van socialemediaplatforms voor interpersoonlijke communicatiedoeleinden?",
+					questionB:
+						"Hoe vaak gebruikt u sociale media om met vrienden en familie te communiceren?",
 					options: [
-						"Sensitive Question",
-						"Double-Barrelled Question",
-						"Complex Question",
+						"Technisch Jargon",
+						"Dubbelzinnige Vraag",
+						"Complexe Vraag",
 					],
-					correctAnswer: "Double-Barrelled Question",
+					correctAnswer: "Technisch Jargon",
 					explanation:
-						"Question A is a **double-barrelled question** that asks about two completely different topics: income and job satisfaction. These should be separate questions. Question B focuses on one clear topic.",
+						"Vraag A gebruikt **technisch jargon** en onnodig complexe taal ('gebruik maken van', 'interpersoonlijke communicatiedoeleinden') die respondenten kan verwarren. Vraag B gebruikt eenvoudige, alledaagse taal die gemakkelijker te begrijpen is.",
 				},
 				{
-					questionA: "Have you ever used illegal drugs in your lifetime?",
-					questionB: "What is your favorite color?",
-					options: ["Vague Word", "Leading Question", "Sensitive Question"],
-					correctAnswer: "Sensitive Question",
-					explanation:
-						"Question A is a **sensitive question** that deals with illegal behavior, which respondents may be reluctant to answer honestly due to social desirability bias or legal concerns. Question B is a neutral, non-threatening question.",
-				},
-				{
-					questionA:
-						"How frequently do you utilize social media platforms for interpersonal communication purposes?",
+					questionA: "Doet u regelmatig aan lichaamsbeweging?",
 					questionB:
-						"How often do you use social media to communicate with friends and family?",
+						"Op hoeveel van de afgelopen 7 dagen heeft u minstens 30 minuten gesport?",
 					options: [
-						"Technical Jargon",
-						"Ambiguous Question",
-						"Complex Question",
+						"Overtuiging vs. Gedrag",
+						"Gedwongen Keuze",
+						"Dubbelzinnige Vraag",
 					],
-					correctAnswer: "Technical Jargon",
+					correctAnswer: "Dubbelzinnige Vraag",
 					explanation:
-						"Question A uses **technical jargon** and unnecessarily complex language ('utilize,' 'interpersonal communication purposes') that may confuse respondents. Question B uses simple, everyday language that is easier to understand.",
-				},
-				{
-					questionA: "Do you regularly engage in physical activity?",
-					questionB:
-						"In the past 7 days, on how many days did you exercise for at least 30 minutes?",
-					options: ["Belief vs Behavior", "Vague Word", "Ambiguous Question"],
-					correctAnswer: "Ambiguous Question",
-					explanation:
-						"Question A is **ambiguous** because 'regularly' and 'physical activity' are unclear terms that can be interpreted many different ways. Question B provides specific parameters (time frame, duration, clear definition) that eliminate ambiguity.",
+						"Vraag A is **dubbelzinnig** omdat 'regelmatig' en 'lichaamsbeweging' onduidelijke termen zijn die op vele manieren kunnen worden geïnterpreteerd. Vraag B geeft specifieke parameters (tijdsbestek, duur, duidelijke definitie) die de dubbelzinnigheid wegnemen.",
 				},
 				{
 					questionA:
-						"Do you agree or disagree with this statement: men are better suited emotionally for politics than are most women?",
+						"Bent u het eens of oneens met deze stelling: mannen zijn emotioneel beter geschikt voor de politiek dan de meeste vrouwen?",
 					questionB:
-						"Would you say that most men are better suited emotionally for politics than are most women, that men and women are equally suited, or that women are better suited than men in this area?",
-					options: [
-						"Leading Question",
-						"Forced Choice",
-						"Double-Barrelled Question",
-					],
-					correctAnswer: "Forced Choice",
+						"Zou u zeggen dat de meeste mannen emotioneel beter geschikt zijn voor de politiek dan de meeste vrouwen, dat mannen en vrouwen even geschikt zijn, of dat vrouwen op dit gebied beter geschikt zijn dan mannen?",
+					options: ["Sturende Vraag", "Gedwongen Keuze", "Twee-in-één Vraag"],
+					correctAnswer: "Gedwongen Keuze",
 					explanation:
-						"Question A demonstrates **forced choice** bias by only offering 'agree' or 'disagree' to a loaded premise, with no neutral option. Question B provides a full range of balanced options, including a neutral middle ground.",
+						"Vraag A toont **gedwongen keuze**-bias door alleen 'eens' of 'oneens' aan te bieden bij een beladen premisse, zonder neutrale optie. Vraag B biedt een volledig scala aan gebalanceerde opties, inclusief een neutraal midden.",
 				},
 				{
 					questionA:
-						"Do you agree with Barack Obama's billion dollar bailout of the banking industry?",
+						"Bent u het eens met de miljardenredding van de bankensector door de regering-Rutte?",
 					questionB:
-						"Do you agree with the billion-dollar plan to rescue the banking industry?",
-					options: ["Leading Question", "Framing", "Sensitive Question"],
+						"Bent u het eens met het miljardenplan om de bankensector te redden?",
+					options: ["Twee-in-één Vraag", "Framing", "Gevoelige Vraag"],
 					correctAnswer: "Framing",
 					explanation:
-						"Question A uses **framing** by associating the policy with a specific political figure (Barack Obama), which can bias responses based on feelings about the person rather than the policy. Question B removes this framing bias.",
+						"Vraag A gebruikt **framing** door het beleid te associëren met een specifieke politieke figuur/regering, wat reacties kan beïnvloeden op basis van gevoelens over de persoon/partij in plaats van het beleid. Vraag B verwijdert deze framing-bias.",
 				},
 				{
 					questionA:
-						"It is estimated that disposable diapers account for less than 2% of the trash in today's landfills. In contrast, beverage containers, third class mail and yard waste are estimated to account for about 21% of trash in landfills. Given this, in your opinion, would it be fair to tax or ban disposable diapers?",
+						"Geschat wordt dat wegwerpluiers minder dan 2% van het afval op de huidige stortplaatsen uitmaken. Daarentegen wordt geschat dat drankverpakkingen, reclamepost en tuinafval ongeveer 21% van het afval op stortplaatsen uitmaken. Zou het, gezien dit, naar uw mening eerlijk zijn om wegwerpluiers te belasten of te verbieden?",
 					questionB:
-						"Do you support, oppose, or are neutral about a tax on disposable diapers to offset the environmental cost?",
-					options: ["Complex Question", "Framing", "Double-Barrelled Question"],
+						"Bent u voor, tegen of neutraal over een belasting op wegwerpluiers om de milieukosten te compenseren?",
+					options: ["Complexe Vraag", "Framing", "Twee-in-één Vraag"],
 					correctAnswer: "Framing",
 					explanation:
-						"Question A uses **framing** by providing biased information upfront to persuade the respondent against the tax before asking the question. This leading context manipulates responses. Question B is direct and neutral.",
-				},
-				{
-					questionA: "Did anyone physically attack you in the last six months?",
-					questionB: "Did anyone physically attack you in the last 12 months?",
-					options: [
-						"Ambiguous Question",
-						"Sensitive Question",
-						"Starting Time",
-					],
-					correctAnswer: "Starting Time",
-					explanation:
-						"This demonstrates the importance of **starting time** precision. The 6-month vs 12-month difference will fundamentally change the data collected. Different time frames make results incomparable and can bias findings.",
+						"Vraag A gebruikt **framing** door vooraf bevooroordeelde informatie te geven om de respondent tegen de belasting te overtuigen voordat de vraag wordt gesteld. Deze sturende context manipuleert de antwoorden. Vraag B is direct en neutraal.",
 				},
 				{
 					questionA:
-						"Are you satisfied with your current job and do you think you are paid fairly?",
-					questionB: "Are you satisfied with your current job?",
-					options: [
-						"Sensitive Question",
-						"Double-Barrelled Question",
-						"Complex Question",
-					],
-					correctAnswer: "Double-Barrelled Question",
-					explanation:
-						"Question A is a **double-barrelled question** that asks about two separate issues in one question: job satisfaction AND fair compensation. A respondent might be satisfied with their job duties but unhappy with their pay, or vice versa. Question B focuses on one clear aspect.",
-				},
-				{
-					questionA:
-						"Does it seem possible or does it seem impossible to you that the Nazi extermination of the Jews never happened?",
+						"Heeft iemand u in de afgelopen zes maanden fysiek aangevallen?",
 					questionB:
-						"Do you believe the the Nazi extermination of the Jews (Holocaust) happened?",
-					options: [
-						"Sensitive Question",
-						"Double-Barrelled Question",
-						"Complex Question",
-					],
-					correctAnswer: "Complex Question",
+						"Heeft iemand u in de afgelopen 12 maanden fysiek aangevallen?",
+					options: ["Dubbelzinnige Vraag", "Gevoelige Vraag", "Begintijd"],
+					correctAnswer: "Begintijd",
 					explanation:
-						"Question A is a **complex question** due to its confusing double negation ('possible...never happened') and convoluted sentence structure that makes it difficult for respondents to parse and understand what they're actually being asked. Question B uses clear, direct language that eliminates the linguistic complexity.",
+						"Dit toont het belang van precisie in de **begintijd**. Het verschil tussen 6 maanden en 12 maanden zal de verzamelde gegevens fundamenteel veranderen. Verschillende tijdsbestekken maken resultaten onvergelijkbaar en kunnen bevindingen beïnvloeden.",
 				},
 				{
-					questionA: "Do you practice safe sex?",
-					questionB: "Do you own a car?",
-					options: ["Leading Question", "Vague Word", "Sensitive Question"],
-					correctAnswer: "Sensitive Question",
+					questionA:
+						"Bent u tevreden met uw huidige baan en vindt u dat u eerlijk betaald wordt?",
+					questionB: "Bent u tevreden met uw huidige baan?",
+					options: ["Gevoelige Vraag", "Twee-in-één Vraag", "Complexe Vraag"],
+					correctAnswer: "Twee-in-één Vraag",
 					explanation:
-						"Question A is a **sensitive question** dealing with private, personal behavior where there's social pressure to give the 'correct' answer. This can lead to dishonest responses. Question B is a neutral, factual question with no social judgment.",
+						"Vraag A is een **twee-in-één vraag** die over twee aparte onderwerpen in één vraag gaat: baantevredenheid EN eerlijke beloning. Een respondent kan tevreden zijn met zijn taken, maar ontevreden over zijn salaris, of andersom. Vraag B richt zich op één duidelijk aspect.",
+				},
+				{
+					questionA:
+						"Lijkt het u mogelijk of lijkt het u onmogelijk dat de uitroeiing van de Joden door de nazi's nooit heeft plaatsgevonden?",
+					questionB:
+						"Gelooft u dat de uitroeiing van de Joden door de nazi's (de Holocaust) heeft plaatsgevonden?",
+					options: ["Gevoelige Vraag", "Twee-in-één Vraag", "Complexe Vraag"],
+					correctAnswer: "Complexe Vraag",
+					explanation:
+						"Vraag A is een **complexe vraag** vanwege de verwarrende dubbele ontkenning ('onmogelijk...nooit heeft plaatsgevonden') en de ingewikkelde zinsstructuur die het voor respondenten moeilijk maakt te begrijpen wat er eigenlijk wordt gevraagd. Vraag B gebruikt duidelijke, directe taal die de taalkundige complexiteit elimineert.",
+				},
+				{
+					questionA: "Praktiseert u veilige seks?",
+					questionB: "Heeft u een auto?",
+					options: ["Sturende Vraag", "Vaag Woord", "Gevoelige Vraag"],
+					correctAnswer: "Gevoelige Vraag",
+					explanation:
+						"Vraag A is een **gevoelige vraag** die gaat over privé, persoonlijk gedrag waar sociale druk is om het 'juiste' antwoord te geven. Dit kan leiden tot oneerlijke antwoorden. Vraag B is een neutrale, feitelijke vraag zonder sociaal oordeel.",
+				},
+				{
+					questionA:
+						"Bent u het er niet mee eens dat de nieuwe, milieuvriendelijke verpakking een enorme verbetering is?",
+					questionB: "Wat is uw mening over de nieuwe verpakking?",
+					options: ["Sturende Vraag", "Twee-in-één Vraag", "Complexe Vraag"],
+					correctAnswer: "Sturende Vraag",
+					explanation:
+						"Vraag A is een **sturende vraag** omdat de formulering ('bent u het er niet mee eens', 'enorme verbetering') de respondent in de richting van een positief antwoord duwt. Vraag B is neutraal en vraagt open naar een mening.",
+				},
+				{
+					questionA:
+						"Hoeveel uur per week kijkt u televisie? 0-5 uur, 5-10 uur, 10-15 uur, of 15+ uur.",
+					questionB:
+						"Hoeveel uur per week kijkt u televisie? 0-4 uur, 5-9 uur, 10-14 uur, of 15+ uur.",
+					options: [
+						"Ontbrekend Interval",
+						"Overlappend Interval",
+						"Gedwongen Keuze",
+					],
+					correctAnswer: "Overlappend Interval",
+					explanation:
+						"Vraag A heeft een **overlappend interval**. Als iemand precies 5 of 10 uur kijkt, is het onduidelijk welke categorie gekozen moet worden. Vraag B heeft duidelijke, niet-overlappende categorieën.",
+				},
+				{
+					questionA:
+						"Zou u ingrijpen als u iemand op straat lastiggevallen ziet worden?",
+					questionB:
+						"Heeft u in het afgelopen jaar ingegrepen toen u zag dat iemand op straat werd lastiggevallen?",
+					options: [
+						"Gevoelige Vraag",
+						"Overtuiging vs. Gedrag",
+						"Sturende Vraag",
+					],
+					correctAnswer: "Overtuiging vs. Gedrag",
+					explanation:
+						"Vraag A meet een **overtuiging** of intentie, wat vaak verschilt van feitelijk **gedrag** (sociale wenselijkheid speelt hier een rol). Vraag B vraagt naar concreet, feitelijk gedrag in het verleden, wat een betrouwbaarder antwoord oplevert.",
+				},
+				{
+					questionA:
+						"Bent u tevreden met de snelheid van onze service? Ja / Nee",
+					questionB:
+						"Hoe tevreden bent u met de snelheid van onze service? (Schaal van 1=Zeer ontevreden tot 5=Zeer tevreden)",
+					options: ["Gedwongen Keuze", "Ongevoelige Meting", "Korte Vraag"],
+					correctAnswer: "Ongevoelige Meting",
+					explanation:
+						"Vraag A gebruikt een **ongevoelige meting**. Een 'Ja/Nee'-antwoord kan geen onderscheid maken tussen 'een beetje tevreden' en 'extreem tevreden'. Vraag B gebruikt een Likert-schaal die veel genuanceerdere data oplevert.",
+				},
+				{
+					questionA: "Wat is uw leeftijd? 18-25, 26-35, 46-55, 56+",
+					questionB: "Wat is uw leeftijd? 18-25, 26-35, 36-45, 46-55, 56+",
+					options: [
+						"Ontbrekend Interval",
+						"Overlappend Interval",
+						"Gegevensdegradatie",
+					],
+					correctAnswer: "Ontbrekend Interval",
+					explanation:
+						"In Vraag A is er een **ontbrekend interval**. Mensen tussen 36 en 45 jaar oud kunnen hun leeftijd niet invullen. Vraag B heeft een complete set van opeenvolgende leeftijdscategorieën.",
+				},
+				{
+					questionA:
+						"Hoeveel glazen water dronk u precies op 15 januari vorig jaar?",
+					questionB: "Hoeveel glazen water drinkt u gemiddeld per dag?",
+					options: [
+						"Complexe Vraag",
+						"Herinnering (recall)",
+						"Gevoelige Vraag",
+					],
+					correctAnswer: "Herinnering (recall)",
+					explanation:
+						"Vraag A lijdt aan **herinneringsbias (recall bias)**. Het is voor respondenten vrijwel onmogelijk om zich zo'n specifiek detail van lang geleden accuraat te herinneren. Vraag B vraagt naar een recent gemiddelde, wat veel makkelijker en betrouwbaarder te beantwoorden is.",
+				},
+				{
+					questionA:
+						"Valt uw salaris in de categorie 'laag', 'gemiddeld' of 'hoog'?",
+					questionB:
+						"Wat is uw bruto maandsalaris? (U mag een exact bedrag invullen)",
+					options: ["Vaag Woord", "Gegevensdegradatie", "Gevoelige Vraag"],
+					correctAnswer: "Gegevensdegradatie",
+					explanation:
+						"Vraag A leidt tot **gegevensdegradatie**. Door te vragen naar brede, subjectieve categorieën gaat waardevolle, precieze informatie verloren. Vraag B verzamelt continue data, die later altijd nog in categorieën kan worden ingedeeld als dat nodig is.",
+				},
+				{
+					questionA:
+						"(Na een reeks vragen over de gevaren van kernenergie) Wat is uw mening over het bouwen van een nieuwe kerncentrale in uw provincie?",
+					questionB:
+						"Wat is uw mening over het bouwen van een nieuwe kerncentrale in uw provincie?",
+					options: ["Framing", "Mind-set", "Sturende Vraag"],
+					correctAnswer: "Mind-set",
+					explanation:
+						"Vraag A creëert een **mind-set**-bias. Door de respondent eerst te primen met vragen over de gevaren, wordt de perceptie negatief beïnvloed voordat de eigenlijke vraag wordt gesteld. Vraag B stelt de vraag zonder deze voorafgaande context.",
+				},
+				{
+					questionA:
+						"In hoeverre bent u het eens met de proliferatie van fastfoodketens in uw stad?",
+					questionB:
+						"In hoeverre bent u het eens met de toename van het aantal fastfoodketens in uw stad?",
+					options: [
+						"Technisch Jargon",
+						"Ongebruikelijk Woord",
+						"Complexe Vraag",
+					],
+					correctAnswer: "Ongebruikelijk Woord",
+					explanation:
+						"Vraag A gebruikt een **ongebruikelijk woord** ('proliferatie') dat niet iedereen zal begrijpen. Dit kan leiden tot verwarring of onjuiste antwoorden. Vraag B gebruikt een eenvoudiger en duidelijker synoniem ('toename van het aantal').",
+				},
+				{
+					questionA:
+						"Denk terug aan alle keren dat u de afgelopen jaren op vakantie bent geweest. Wanneer was uw laatste vliegreis?",
+					questionB:
+						"In welk van de volgende periodes was uw laatste vliegreis? (Afgelopen 6 maanden, 7-12 maanden geleden, 1-2 jaar geleden, langer dan 2 jaar geleden)",
+					options: ["Telescoop-effect", "Gevoelige Vraag", "Begintijd"],
+					correctAnswer: "Telescoop-effect",
+					explanation:
+						"Vraag A kan het **telescoop-effect** uitlokken, waarbij mensen de neiging hebben om gebeurtenissen die verder weg liggen als recenter te herinneren. Vraag B geeft duidelijke periodes, wat helpt om de herinnering beter te verankeren en dit effect te verminderen.",
 				},
 			];
 
@@ -1050,7 +1217,7 @@
 					this.elements = this.getElements();
 
 					this.bindEvents();
-					this.startQuiz();
+					this.init();
 				}
 
 				getQuestionCountFromURL() {
@@ -1061,8 +1228,8 @@
 					if (questionCount > 0 && questionCount <= maxQuestions) {
 						return questionCount;
 					}
-					// Default to 6 questions if no parameter specified
-					return 6;
+					// Standaard 8 vragen als er geen parameter is opgegeven
+					return 8;
 				}
 
 				sampleQuestions(questions, count) {
@@ -1072,6 +1239,8 @@
 
 				getElements() {
 					const elementIds = [
+						"intro-screen",
+						"start-btn",
 						"question-screen",
 						"results-container",
 						"question-header",
@@ -1092,11 +1261,11 @@
 					];
 					const elements = {};
 					for (const id of elementIds) {
-						const key = id.replace(/-./g, (m) => m[1].toUpperCase()); // kebab-case to camelCase
+						const key = id.replace(/-./g, (m) => m[1].toUpperCase()); // kebab-case naar camelCase
 						elements[key] = document.getElementById(id);
 						if (!elements[key]) {
 							console.error(
-								`Initialization Error: Element with ID #${id} not found.`
+								`Initialisatiefout: Element met ID #${id} niet gevonden.`
 							);
 						}
 					}
@@ -1104,6 +1273,9 @@
 				}
 
 				bindEvents() {
+					this.elements.startBtn.addEventListener("click", () =>
+						this.startQuiz()
+					);
 					this.elements.nextBtn.addEventListener("click", () =>
 						this.nextQuestion()
 					);
@@ -1115,10 +1287,17 @@
 					);
 				}
 
+				init() {
+					this.elements.introScreen.classList.remove("hidden");
+					this.elements.questionScreen.classList.add("hidden");
+					this.elements.resultsContainer.classList.add("hidden");
+				}
+
 				startQuiz() {
 					this.currentQuestionIndex = 0;
 					this.score = 0;
 					this.userAnswers = [];
+					this.elements.introScreen.classList.add("hidden");
 					this.elements.questionScreen.classList.remove("hidden");
 					this.elements.resultsContainer.classList.add("hidden");
 					this.showQuestion();
@@ -1136,20 +1315,20 @@
 					const progressPercent =
 						(this.currentQuestionIndex / totalQuestions) * 100;
 					this.elements.progressBar.style.width = `${progressPercent}%`;
-					this.elements.progressText.textContent = `Question ${currentQuestionNum} of ${totalQuestions}`;
+					this.elements.progressText.textContent = `Vraag ${currentQuestionNum} van ${totalQuestions}`;
 
-					this.elements.questionHeader.textContent = `Question Pair ${currentQuestionNum}`;
+					this.elements.questionHeader.textContent = `Vragenpaar ${currentQuestionNum}`;
 					this.elements.questionA.textContent = currentQuestion.questionA;
 					this.elements.questionB.textContent = currentQuestion.questionB;
 
 					if (this.currentQuestionIndex < totalQuestions - 1) {
 						this.elements.nextBtn.firstElementChild.textContent =
-							"Next Question";
+							"Volgende Vraag";
 						this.elements.nextQuestionNumber.textContent =
 							currentQuestionNum + 1;
 					} else {
 						this.elements.nextBtn.firstElementChild.textContent =
-							"View Results";
+							"Bekijk Resultaten";
 					}
 
 					this.renderOptions(currentQuestion);
@@ -1169,7 +1348,7 @@
 				selectAnswer(button, selectedOption, question) {
 					const isCorrect = selectedOption === question.correctAnswer;
 					this.userAnswers.push({
-						question: `Question ${this.currentQuestionIndex + 1}`,
+						question: `Vraag ${this.currentQuestionIndex + 1}`,
 						isCorrect: isCorrect,
 					});
 
@@ -1206,7 +1385,7 @@
 						container.className = "feedback-correct show";
 					} else {
 						container.innerHTML = `
-                    <strong>❌ Not quite.</strong> The best answer is <strong>${correctAnswer}</strong>.<br><br>
+                    <strong>❌ Niet helemaal.</strong> Het beste antwoord is <strong>${correctAnswer}</strong>.<br><br>
                     ${formattedExplanation}
                 `;
 						container.className = "feedback-incorrect show";
@@ -1255,14 +1434,14 @@
 
 				getPerformanceMessage(percentage) {
 					if (percentage >= 90)
-						return "🌟 Outstanding! You're a survey bias expert!";
+						return "🌟 Uitstekend! Je bent een expert in enquête-bias!";
 					if (percentage >= 80)
-						return "🎯 Excellent work! You have a great understanding of survey biases.";
+						return "🎯 Geweldig werk! Je hebt een goed begrip van enquête-biases.";
 					if (percentage >= 70)
-						return "👍 Good job! You identified most biases correctly.";
+						return "👍 Goed gedaan! Je hebt de meeste biases correct geïdentificeerd.";
 					if (percentage >= 60)
-						return "📚 Not bad! Consider reviewing survey methodology principles.";
-					return "🤔 This is tricky stuff! Try again to improve your understanding.";
+						return "📚 Niet slecht! Overweeg de principes van enquêtemethodologie te herzien.";
+					return "🤔 Dit is lastige materie! Probeer het opnieuw om je begrip te verbeteren.";
 				}
 
 				showResultsBreakdown() {
@@ -1294,7 +1473,7 @@
 								`<div class="review-item">
                                 <div class="review-bias-type">
                                     <span>❌</span>
-                                    <span>Question ${index + 1}: ${
+                                    <span>Vraag ${index + 1}: ${
 									questionData.correctAnswer
 								}</span>
                                 </div>
@@ -1308,22 +1487,22 @@
 
 				restartQuiz() {
 					this.elements.restartBtn.innerHTML =
-						'<span>🔄 Restarting...</span><span class="loading"></span>';
+						'<span>🔄 Opnieuw starten...</span><span class="loading"></span>';
 					setTimeout(() => {
 						this.elements.restartBtn.innerHTML =
-							"<span>🔄 Take Quiz Again</span>";
+							"<span>🔄 Doe de Quiz Opnieuw</span>";
 						this.quizData = this.sampleQuestions(
 							this.fullQuizData,
 							this.totalQuestions
 						);
-						this.startQuiz();
+						this.init();
 					}, 500);
 				}
 
 				downloadResults() {
 					const originalTitle = document.title;
-					document.title = `Survey Bias Quiz Results - Score: ${this.score}/${this.quizData.length}`;
-					// The @media print styles will handle the rest
+					document.title = `Resultaten Enquête-bias Quiz - Score: ${this.score}/${this.quizData.length}`;
+					// De @media print stijlen regelen de rest
 					window.print();
 					document.title = originalTitle;
 				}

@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Survey Bias Quiz - Enhanced</title>
+		<style>
+			:root {
+				--primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				--secondary-gradient: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+				--action-gradient: linear-gradient(145deg, #9b59b6, #8e44ad);
+				--correct-gradient: linear-gradient(145deg, #2ecc71, #27ae60);
+				--incorrect-gradient: linear-gradient(145deg, #e74c3c, #c0392b);
+				--bg-light: #f8f9fa;
+				--bg-white: #ffffff;
+				--border-color: #dee2e6;
+				--text-dark: #2c3e50;
+				--text-medium: #495057;
+				--text-light: #666;
+				--border-radius-main: 16px;
+				--border-radius-inner: 12px;
+				--shadow-main: 0 8px 32px rgba(0, 0, 0, 0.15);
+				--shadow-hover: 0 6px 20px rgba(79, 172, 254, 0.4);
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+					Helvetica, Arial, sans-serif;
+				background: var(--primary-gradient);
+				color: var(--text-dark);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				margin: 0;
+				padding: 20px;
+			}
+
+			#quiz-container {
+				background-color: var(--bg-white);
+				border-radius: var(--border-radius-main);
+				box-shadow: var(--shadow-main);
+				width: 100%;
+				max-width: 900px;
+				padding: 40px;
+				position: relative;
+				overflow: hidden;
+				transition: all 0.3s ease;
+			}
+
+			.progress-container {
+				width: 100%;
+				height: 6px;
+				background-color: #e0e0e0;
+				border-radius: 3px;
+				margin-bottom: 30px;
+				overflow: hidden;
+			}
+
+			.progress-bar {
+				height: 100%;
+				background: var(--secondary-gradient);
+				width: 0%;
+				border-radius: 3px;
+				transition: width 0.6s ease;
+			}
+
+			.progress-text {
+				text-align: center;
+				font-size: 0.9em;
+				color: var(--text-light);
+				margin-bottom: 20px;
+			}
+
+			.question-header {
+				text-align: center;
+				margin-bottom: 30px;
+				font-size: 1.8em;
+				font-weight: 700;
+				color: var(--text-dark);
+				opacity: 0;
+				animation: slideIn 0.6s ease forwards;
+			}
+
+			@keyframes slideIn {
+				from {
+					opacity: 0;
+					transform: translateY(-20px);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			.question-pair {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 25px;
+				margin-bottom: 30px;
+				border-top: 2px solid #e8ecf4;
+				border-bottom: 2px solid #e8ecf4;
+				padding: 25px 0;
+				opacity: 0;
+				animation: slideIn 0.6s ease 0.2s forwards;
+			}
+
+			@media (max-width: 768px) {
+				.question-pair {
+					grid-template-columns: 1fr;
+					gap: 20px;
+				}
+			}
+
+			.question-box {
+				padding: 20px;
+				border-radius: var(--border-radius-inner);
+				background: linear-gradient(145deg, var(--bg-light), #e9ecef);
+				border: 1px solid var(--border-color);
+				position: relative;
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
+			}
+
+			.question-box:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			}
+
+			.question-box h3 {
+				margin-top: 0;
+				margin-bottom: 15px;
+				color: var(--text-medium);
+				font-size: 1.1em;
+				font-weight: 600;
+			}
+
+			.question-box.biased h3 {
+				color: #e74c3c;
+			}
+			.question-box.improved h3 {
+				color: #27ae60;
+			}
+
+			.question-box p {
+				font-style: italic;
+				line-height: 1.6;
+				margin: 0;
+				font-size: 0.95em;
+			}
+
+			.quiz-question {
+				text-align: center;
+				font-size: 1.3em;
+				font-weight: 600;
+				color: var(--text-dark);
+				margin-bottom: 25px;
+				opacity: 0;
+				animation: slideIn 0.6s ease 0.4s forwards;
+			}
+
+			#options-container {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 15px;
+				margin-bottom: 25px;
+				opacity: 0;
+				animation: slideIn 0.6s ease 0.6s forwards;
+			}
+
+			.option-btn {
+				background: var(--secondary-gradient);
+				color: white;
+				border: none;
+				padding: 18px 20px;
+				border-radius: var(--border-radius-inner);
+				font-size: 1em;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+				transform: translateY(0);
+			}
+
+			.option-btn::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: -100%;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(
+					90deg,
+					transparent,
+					rgba(255, 255, 255, 0.2),
+					transparent
+				);
+				transition: left 0.5s;
+			}
+
+			.option-btn:hover:not(:disabled) {
+				transform: translateY(-3px);
+				box-shadow: var(--shadow-hover);
+			}
+
+			.option-btn:hover:not(:disabled)::before {
+				left: 100%;
+			}
+			.option-btn:active {
+				transform: translateY(-1px);
+			}
+			.option-btn:disabled {
+				cursor: not-allowed;
+				opacity: 0.8;
+			}
+			.option-btn.correct {
+				background: var(--correct-gradient);
+				animation: pulse 0.6s ease;
+			}
+			.option-btn.incorrect {
+				background: var(--incorrect-gradient);
+				animation: shake 0.6s ease;
+			}
+
+			@keyframes pulse {
+				0%,
+				100% {
+					transform: scale(1);
+				}
+				50% {
+					transform: scale(1.05);
+				}
+			}
+			@keyframes shake {
+				0%,
+				100% {
+					transform: translateX(0);
+				}
+				25% {
+					transform: translateX(-5px);
+				}
+				75% {
+					transform: translateX(5px);
+				}
+			}
+
+			#feedback-container {
+				padding: 20px;
+				border-radius: var(--border-radius-inner);
+				margin-top: 25px;
+				line-height: 1.7;
+				font-size: 1.05em;
+				opacity: 0;
+				transform: translateY(20px);
+				transition: all 0.4s ease;
+			}
+			#feedback-container.show {
+				opacity: 1;
+				transform: translateY(0);
+			}
+			.feedback-correct {
+				background: linear-gradient(145deg, #d4edda, #c3e6cb);
+				border-left: 5px solid #28a745;
+				color: #155724;
+			}
+			.feedback-incorrect {
+				background: linear-gradient(145deg, #f8d7da, #f1b2b2);
+				border-left: 5px solid #dc3545;
+				color: #721c24;
+			}
+
+			#next-btn,
+			#restart-btn,
+			#download-btn {
+				display: block;
+				width: 100%;
+				padding: 18px;
+				background: var(--action-gradient);
+				color: white;
+				border: none;
+				border-radius: var(--border-radius-inner);
+				font-size: 1.2em;
+				font-weight: 600;
+				cursor: pointer;
+				margin-top: 25px;
+				transition: all 0.3s ease;
+				position: relative;
+				overflow: hidden;
+			}
+			#next-btn::before,
+			#restart-btn::before,
+			#download-btn::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: -100%;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(
+					90deg,
+					transparent,
+					rgba(255, 255, 255, 0.2),
+					transparent
+				);
+				transition: left 0.5s;
+			}
+			#next-btn:hover,
+			#restart-btn:hover,
+			#download-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 6px 20px rgba(155, 89, 182, 0.4);
+			}
+			#next-btn:hover::before,
+			#restart-btn:hover::before,
+			#download-btn:hover::before {
+				left: 100%;
+			}
+
+			.hidden {
+				display: none !important;
+			}
+
+			#results-container {
+				text-align: center;
+				opacity: 0;
+				animation: slideIn 0.6s ease forwards;
+			}
+			#results-container h2 {
+				color: var(--text-dark);
+				font-size: 2.2em;
+				margin-bottom: 20px;
+				font-weight: 700;
+			}
+
+			.score-display {
+				font-size: 3em;
+				font-weight: 700;
+				margin: 20px 0;
+				background: var(--secondary-gradient);
+				-webkit-background-clip: text;
+				background-clip: text;
+				color: transparent;
+			}
+
+			.performance-message {
+				font-size: 1.3em;
+				margin: 20px 0;
+				color: var(--text-medium);
+				font-weight: 500;
+			}
+
+			.results-breakdown {
+				background: var(--bg-light);
+				border-radius: var(--border-radius-inner);
+				padding: 25px;
+				margin: 25px 0;
+				text-align: left;
+			}
+			.results-breakdown h3 {
+				color: var(--text-dark);
+				margin-bottom: 15px;
+				text-align: center;
+			}
+
+			.breakdown-item {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 10px 0;
+				border-bottom: 1px solid #e9ecef;
+			}
+			.breakdown-item:last-child {
+				border-bottom: none;
+			}
+
+			.breakdown-status {
+				font-weight: 600;
+				padding: 4px 12px;
+				border-radius: 20px;
+				font-size: 0.9em;
+			}
+			.breakdown-correct {
+				background-color: #d4edda;
+				color: #155724;
+			}
+			.breakdown-incorrect {
+				background-color: #f8d7da;
+				color: #721c24;
+			}
+
+			.review-item {
+				margin-bottom: 20px;
+				padding: 15px;
+				border-radius: 8px;
+				background: linear-gradient(145deg, var(--bg-white), var(--bg-light));
+				border-left: 4px solid #e74c3c;
+			}
+			.review-bias-type {
+				font-weight: 700;
+				color: #e74c3c;
+				font-size: 1.1em;
+				margin-bottom: 8px;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.review-question {
+				font-style: italic;
+				color: var(--text-medium);
+				line-height: 1.5;
+				margin: 0;
+				padding: 10px;
+				background: var(--bg-light);
+				border-radius: 6px;
+				border: 1px solid var(--border-color);
+			}
+
+			/* --- Styles for the new Reference Guide --- */
+			.bias-main-category > h4 {
+				font-size: 1.4em;
+				color: var(--text-dark);
+				padding-bottom: 8px;
+				border-bottom: 3px solid var(--primary-gradient);
+				margin-top: 20px;
+				margin-bottom: 15px;
+			}
+			.bias-sub-category > h5 {
+				font-size: 1.1em;
+				font-weight: 700;
+				color: var(--text-medium);
+				margin-top: 15px;
+				margin-bottom: 10px;
+			}
+			.bias-item {
+				background: var(--bg-white);
+				padding: 10px;
+				border-left: 3px solid var(--secondary-gradient);
+				margin-bottom: 8px;
+				font-size: 0.95em;
+			}
+			.bias-citation {
+				margin-top: 30px;
+				font-size: 0.8em;
+				color: var(--text-light);
+				text-align: center;
+				line-height: 1.5;
+			}
+
+			/* --- Accessibility & Utility --- */
+			.visually-hidden {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				padding: 0;
+				margin: -1px;
+				overflow: hidden;
+				clip: rect(0, 0, 0, 0);
+				white-space: nowrap;
+				border: 0;
+			}
+			button:focus-visible {
+				outline: 3px solid #4facfe;
+				outline-offset: 2px;
+			}
+			.loading {
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				border: 3px solid rgba(255, 255, 255, 0.3);
+				border-top-color: var(--bg-white);
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+				margin-left: 10px;
+			}
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+
+			/* --- Print Styles --- */
+			@media print {
+				body {
+					background: none;
+					color: #000;
+					padding: 0;
+				}
+				.no-print {
+					display: none !important;
+				}
+				#quiz-container {
+					box-shadow: none;
+					border-radius: 0;
+					padding: 0;
+					max-width: 100%;
+				}
+				#question-screen {
+					display: none;
+				}
+				#results-container {
+					display: block !important;
+					opacity: 1 !important;
+					animation: none !important;
+				}
+				.score-display {
+					-webkit-text-fill-color: initial;
+					background: none;
+					color: #000;
+				}
+				.results-breakdown,
+				.review-item {
+					background: #fff;
+					border: 1px solid #ccc;
+				}
+				.breakdown-correct,
+				.breakdown-incorrect {
+					border: 1px solid #ccc;
+					color: #000;
+					background: #eee;
+				}
+				h2,
+				h3,
+				h4,
+				h5 {
+					page-break-after: avoid;
+				}
+				.review-item,
+				.breakdown-item,
+				.bias-item {
+					page-break-inside: avoid;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="quiz-container">
+			<div id="question-screen" role="main">
+				<div
+					class="progress-container no-print"
+					role="progressbar"
+					aria-valuenow="0"
+					aria-valuemin="0"
+					aria-valuemax="100"
+				>
+					<div class="progress-bar" id="progress-bar"></div>
+				</div>
+				<p class="progress-text no-print" id="progress-text">Question 1 of ?</p>
+
+				<h1 id="question-header" class="question-header">
+					Survey Question Bias Identification
+				</h1>
+
+				<div class="question-pair">
+					<div class="question-box biased">
+						<h3>❌ Questionnaire A (Biased)</h3>
+						<p id="question-a" role="text"></p>
+					</div>
+					<div class="question-box improved">
+						<h3>✅ Questionnaire B (Improved)</h3>
+						<p id="question-b" role="text"></p>
+					</div>
+				</div>
+
+				<div class="quiz-question">
+					<span id="bias-question">Which bias is present in Question A?</span>
+				</div>
+
+				<div
+					id="options-container"
+					role="group"
+					aria-labelledby="bias-question"
+				></div>
+
+				<div
+					id="feedback-container"
+					class="hidden"
+					role="alert"
+					aria-live="polite"
+				></div>
+
+				<button id="next-btn" class="hidden no-print">
+					<span>Next Question</span>
+					<span class="visually-hidden"
+						>- Continue to question
+						<span id="next-question-number">2</span></span
+					>
+				</button>
+			</div>
+
+			<div id="results-container" class="hidden" role="main">
+				<h2>🎉 Quiz Complete!</h2>
+				<div
+					class="score-display"
+					id="score-display"
+					role="text"
+					aria-label="Final score"
+				>
+					0/8
+				</div>
+				<p class="performance-message" id="performance-message"></p>
+
+				<div class="results-breakdown" id="results-breakdown">
+					<h3>📊 Detailed Results</h3>
+					<div id="breakdown-list"></div>
+				</div>
+
+				<div class="results-breakdown" id="question-review">
+					<h3>📚 Question Review - All Biased Examples</h3>
+					<div id="question-review-list"></div>
+				</div>
+
+				<!-- --- UPDATED REFERENCE GUIDE --- -->
+				<div class="results-breakdown" id="bias-reference">
+					<h3>📖 Survey Bias Reference Guide</h3>
+					<div id="bias-reference-content">
+						<div class="bias-main-category">
+							<h4>1. Question Design</h4>
+							<div class="bias-sub-category">
+								<h5>Problems with wording</h5>
+								<div class="bias-item">
+									<strong>Ambiguous question:</strong> Leads respondents to
+									understand the question differently than was intended.
+								</div>
+								<div class="bias-item">
+									<strong>Complex question:</strong> Questions that are too
+									long, formal, or use confusing structures (e.g., neither/nor).
+								</div>
+								<div class="bias-item">
+									<strong>Double-barrelled question:</strong> Two or more
+									questions are asked as one.
+								</div>
+								<div class="bias-item">
+									<strong>Short question:</strong> May be less accurately
+									answered than longer questions with context.
+								</div>
+								<div class="bias-item">
+									<strong>Technical jargon:</strong> Use of professional terms
+									not understood by the public.
+								</div>
+								<div class="bias-item">
+									<strong>Uncommon word:</strong> Difficult words should be
+									avoided in favor of simpler alternatives.
+								</div>
+								<div class="bias-item">
+									<strong>Vague word:</strong> Undefined terms (e.g., regularly,
+									occasionally) encourage vague answers.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Missing or inadequate data for intended purpose</h5>
+								<div class="bias-item">
+									<strong>Belief vs behavior:</strong> Asking about a
+									hypothetical belief can yield different answers than asking
+									about actual behavior.
+								</div>
+								<div class="bias-item">
+									<strong>Starting time:</strong> Failure to identify a common
+									starting time for exposure or illness.
+								</div>
+								<div class="bias-item">
+									<strong>Data degradation:</strong> Collecting data in
+									categories (degraded) instead of as continuous data at the
+									source.
+								</div>
+								<div class="bias-item">
+									<strong>Insensitive measure:</strong> The measurement scale
+									lacks the power to detect significant differences.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Faulty scale</h5>
+								<div class="bias-item">
+									<strong>Forced choice:</strong> Too few categories force
+									respondents to choose imprecisely (e.g., no "don't know"
+									option).
+								</div>
+								<div class="bias-item">
+									<strong>Missing interval:</strong> Gaps in response choices
+									cause confusion.
+								</div>
+								<div class="bias-item">
+									<strong>Overlapping interval:</strong> Response categories
+									overlap, confusing respondents at the boundaries.
+								</div>
+								<div class="bias-item">
+									<strong>Scale format:</strong> An odd vs. even number of
+									categories can produce different results (neutral vs. forced
+									side).
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Leading questions</h5>
+								<div class="bias-item">
+									<strong>Framing:</strong> Presenting context in a way that
+									leads respondents to an inaccurate answer.
+								</div>
+								<div class="bias-item">
+									<strong>Leading question:</strong> Wording guides or directs
+									respondents toward a specific answer.
+								</div>
+								<div class="bias-item">
+									<strong>Mind-set:</strong> The respondent's perception is
+									affected by the context of previous questions.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Intrusiveness</h5>
+								<div class="bias-item">
+									<strong>Reporting (self-report response):</strong> Respondents
+									may selectively suppress information.
+								</div>
+								<div class="bias-item">
+									<strong>Sensitive question:</strong> Questions on private
+									matters (e.g., income, age) may elicit inaccurate answers.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Inconsistency</h5>
+								<div class="bias-item">
+									<strong>Case definition:</strong> Using different definitions
+									for cases over time or across regions.
+								</div>
+								<div class="bias-item">
+									<strong>Change of scale:</strong> If the measurement scale
+									changes in different surveys, results are not comparable.
+								</div>
+								<div class="bias-item">
+									<strong>Change of wording:</strong> If precise wording
+									changes, results may not be comparable.
+								</div>
+								<div class="bias-item">
+									<strong>Diagnostic vogue:</strong> The same illness may
+									receive different diagnostic labels at different points in
+									space or time.
+								</div>
+							</div>
+						</div>
+						<div class="bias-main-category">
+							<h4>2. Questionnaire Design</h4>
+							<div class="bias-sub-category">
+								<h5>Formatting problem</h5>
+								<div class="bias-item">
+									<strong>Horizontal response format:</strong> Can cause
+									confusion due to poor spacing.
+								</div>
+								<div class="bias-item">
+									<strong>Juxtaposed scale:</strong> Asking for multiple ratings
+									side-by-side may elicit different responses than separate
+									scales.
+								</div>
+								<div class="bias-item">
+									<strong>Left/Right alignment:</strong> Alignment of response
+									choices can produce a bias.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Questionnaire too long</h5>
+								<div class="bias-item">
+									<strong>No/Yes-saying:</strong> Respondents tend to answer all
+									no or all yes to a battery of questions.
+								</div>
+								<div class="bias-item">
+									<strong>Open question:</strong> Can result in data of
+									differential quality due to recording differences.
+								</div>
+								<div class="bias-item">
+									<strong>Response fatigue:</strong> Long questionnaires can
+									induce fatigue and result in inaccurate answers.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Flawed questionnaire structure</h5>
+								<div class="bias-item">
+									<strong>Skipping question:</strong> Logical errors in the flow
+									(skip-logic) can lead to loss of information.
+								</div>
+							</div>
+						</div>
+						<div class="bias-main-category">
+							<h4>3. Administration of Questionnaire</h4>
+							<div class="bias-sub-category">
+								<h5>Interviewer not objective</h5>
+								<div class="bias-item">
+									<strong>Interviewer:</strong> Bias from subconscious or
+									conscious gathering of selective data.
+								</div>
+								<div class="bias-item">
+									<strong>Nonblinding:</strong> An interviewer not blind to the
+									study hypothesis may gather selective data.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Respondent's subconscious reaction</h5>
+								<div class="bias-item">
+									<strong>End aversion (central tendency):</strong> Respondents
+									tend to avoid the extreme ends of scales.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Respondent's conscious reaction</h5>
+								<div class="bias-item">
+									<strong>Faking bad:</strong> Respondents try to appear sick to
+									qualify for support.
+								</div>
+								<div class="bias-item">
+									<strong>Faking good (social desirability):</strong>
+									Respondents alter responses in the direction they perceive is
+									desired.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Respondent's learning</h5>
+								<div class="bias-item">
+									<strong>Learning:</strong> Answering prior questions affects
+									subsequent answers.
+								</div>
+								<div class="bias-item">
+									<strong>Hypothesis guessing:</strong> Respondents alter
+									answers when they think they know the study's hypothesis.
+								</div>
+							</div>
+							<div class="bias-sub-category">
+								<h5>Respondent's inaccurate recall</h5>
+								<div class="bias-item">
+									<strong>Primacy and recency:</strong> Respondents may choose
+									answers differently depending on questionnaire type
+									(mail/in-person).
+								</div>
+								<div class="bias-item">
+									<strong>Proxy respondent:</strong> Soliciting information from
+									proxies (e.g., spouse) can result in inaccurate data.
+								</div>
+								<div class="bias-item">
+									<strong>Recall:</strong> Differences in accuracy of recall
+									prior to major events.
+								</div>
+								<div class="bias-item">
+									<strong>Telescope:</strong> Recalling a distant event as
+									happening more recently.
+								</div>
+							</div>
+						</div>
+					</div>
+					<p class="bias-citation">
+						<strong>Source:</strong> Choi, B. C. K., & Pak, A. W. P. (2005,
+						January). A catalog of biases in questionnaires.
+						<em>Preventing Chronic Disease, 2</em>(1), A13.
+						http://www.cdc.gov/pcd/issues/2005/jan/04_0050.htm
+					</p>
+				</div>
+
+				<button id="download-btn" class="no-print">
+					<span>📄 Download Results as PDF</span>
+				</button>
+
+				<button id="restart-btn" class="no-print">
+					<span>🔄 Take Quiz Again</span>
+				</button>
+			</div>
+		</div>
+
+		<script>
+			// --- YOUR ORIGINAL QUIZ CONTENT ---
+			const FULL_QUIZ_DATA = [
+				{
+					questionA:
+						"How often do you exercise: never, rarely, sometimes, or frequently?",
+					questionB:
+						"How many times per week do you engage in physical exercise for at least 30 minutes? (0, 1-2, 3-4, 5-6, 7 or more)",
+					options: ["Complex Question", "Vague Word", "Ambiguous Question"],
+					correctAnswer: "Vague Word",
+					explanation:
+						"Question A uses **vague words** like 'rarely,' 'sometimes,' and 'frequently' that mean different things to different people. Question B provides specific, measurable categories that are clear and unambiguous.",
+				},
+				{
+					questionA:
+						"Do you support the new healthcare reform bill that will increase taxes but provide universal coverage for all Americans?",
+					questionB: "Do you support or oppose the new healthcare reform bill?",
+					options: [
+						"Leading Question",
+						"Technical Jargon",
+						"Double-Barrelled Question",
+					],
+					correctAnswer: "Double-Barrelled Question",
+					explanation:
+						"Question A is a **double-barrelled question** because it asks about two separate issues in one question: tax increases AND universal coverage. Respondents might support one aspect but not the other. Question B focuses on a single, clear issue.",
+				},
+				{
+					questionA:
+						"Given that crime rates have been rising in urban areas, do you think we need more police officers?",
+					questionB: "Do you think your community needs more police officers?",
+					options: ["Framing", "Sensitive Question", "Forced Choice"],
+					correctAnswer: "Framing",
+					explanation:
+						"Question A uses **framing** by presenting potentially biased information ('crime rates have been rising') before asking the question, which can influence the response. Question B asks the same question without the leading context.",
+				},
+				{
+					questionA:
+						"Rate your satisfaction with our customer service: Excellent, Good, or Average",
+					questionB:
+						"Rate your satisfaction with our customer service: Very Satisfied, Satisfied, Neutral, Dissatisfied, Very Dissatisfied",
+					options: ["Missing Interval", "Scale Format", "Forced Choice"],
+					correctAnswer: "Forced Choice",
+					explanation:
+						"Question A demonstrates **forced choice** bias by providing insufficient response categories. There's no option for dissatisfaction, forcing negative responses into 'Average.' Question B provides a balanced scale with appropriate negative options.",
+				},
+				{
+					questionA:
+						"What is your approximate annual income and how satisfied are you with your current job?",
+					questionB: "What is your approximate annual income?",
+					options: [
+						"Sensitive Question",
+						"Double-Barrelled Question",
+						"Complex Question",
+					],
+					correctAnswer: "Double-Barrelled Question",
+					explanation:
+						"Question A is a **double-barrelled question** that asks about two completely different topics: income and job satisfaction. These should be separate questions. Question B focuses on one clear topic.",
+				},
+				{
+					questionA: "Have you ever used illegal drugs in your lifetime?",
+					questionB: "What is your favorite color?",
+					options: ["Vague Word", "Leading Question", "Sensitive Question"],
+					correctAnswer: "Sensitive Question",
+					explanation:
+						"Question A is a **sensitive question** that deals with illegal behavior, which respondents may be reluctant to answer honestly due to social desirability bias or legal concerns. Question B is a neutral, non-threatening question.",
+				},
+				{
+					questionA:
+						"How frequently do you utilize social media platforms for interpersonal communication purposes?",
+					questionB:
+						"How often do you use social media to communicate with friends and family?",
+					options: [
+						"Technical Jargon",
+						"Ambiguous Question",
+						"Complex Question",
+					],
+					correctAnswer: "Technical Jargon",
+					explanation:
+						"Question A uses **technical jargon** and unnecessarily complex language ('utilize,' 'interpersonal communication purposes') that may confuse respondents. Question B uses simple, everyday language that is easier to understand.",
+				},
+				{
+					questionA: "Do you regularly engage in physical activity?",
+					questionB:
+						"In the past 7 days, on how many days did you exercise for at least 30 minutes?",
+					options: ["Belief vs Behavior", "Vague Word", "Ambiguous Question"],
+					correctAnswer: "Ambiguous Question",
+					explanation:
+						"Question A is **ambiguous** because 'regularly' and 'physical activity' are unclear terms that can be interpreted many different ways. Question B provides specific parameters (time frame, duration, clear definition) that eliminate ambiguity.",
+				},
+				{
+					questionA:
+						"Do you agree or disagree with this statement: men are better suited emotionally for politics than are most women?",
+					questionB:
+						"Would you say that most men are better suited emotionally for politics than are most women, that men and women are equally suited, or that women are better suited than men in this area?",
+					options: [
+						"Leading Question",
+						"Forced Choice",
+						"Double-Barrelled Question",
+					],
+					correctAnswer: "Forced Choice",
+					explanation:
+						"Question A demonstrates **forced choice** bias by only offering 'agree' or 'disagree' to a loaded premise, with no neutral option. Question B provides a full range of balanced options, including a neutral middle ground.",
+				},
+				{
+					questionA:
+						"Do you agree with Barack Obama's billion dollar bailout of the banking industry?",
+					questionB:
+						"Do you agree with the billion-dollar plan to rescue the banking industry?",
+					options: ["Leading Question", "Framing", "Sensitive Question"],
+					correctAnswer: "Framing",
+					explanation:
+						"Question A uses **framing** by associating the policy with a specific political figure (Barack Obama), which can bias responses based on feelings about the person rather than the policy. Question B removes this framing bias.",
+				},
+				{
+					questionA:
+						"It is estimated that disposable diapers account for less than 2% of the trash in today's landfills. In contrast, beverage containers, third class mail and yard waste are estimated to account for about 21% of trash in landfills. Given this, in your opinion, would it be fair to tax or ban disposable diapers?",
+					questionB:
+						"Do you support, oppose, or are neutral about a tax on disposable diapers to offset the environmental cost?",
+					options: ["Complex Question", "Framing", "Double-Barrelled Question"],
+					correctAnswer: "Framing",
+					explanation:
+						"Question A uses **framing** by providing biased information upfront to persuade the respondent against the tax before asking the question. This leading context manipulates responses. Question B is direct and neutral.",
+				},
+				{
+					questionA: "Did anyone physically attack you in the last six months?",
+					questionB: "Did anyone physically attack you in the last 12 months?",
+					options: [
+						"Ambiguous Question",
+						"Sensitive Question",
+						"Starting Time",
+					],
+					correctAnswer: "Starting Time",
+					explanation:
+						"This demonstrates the importance of **starting time** precision. The 6-month vs 12-month difference will fundamentally change the data collected. Different time frames make results incomparable and can bias findings.",
+				},
+				{
+					questionA:
+						"Are you satisfied with your current job and do you think you are paid fairly?",
+					questionB: "Are you satisfied with your current job?",
+					options: [
+						"Sensitive Question",
+						"Double-Barrelled Question",
+						"Complex Question",
+					],
+					correctAnswer: "Double-Barrelled Question",
+					explanation:
+						"Question A is a **double-barrelled question** that asks about two separate issues in one question: job satisfaction AND fair compensation. A respondent might be satisfied with their job duties but unhappy with their pay, or vice versa. Question B focuses on one clear aspect.",
+				},
+				{
+					questionA:
+						"Does it seem possible or does it seem impossible to you that the Nazi extermination of the Jews never happened?",
+					questionB:
+						"Do you believe the the Nazi extermination of the Jews (Holocaust) happened?",
+					options: [
+						"Sensitive Question",
+						"Double-Barrelled Question",
+						"Complex Question",
+					],
+					correctAnswer: "Complex Question",
+					explanation:
+						"Question A is a **complex question** due to its confusing double negation ('possible...never happened') and convoluted sentence structure that makes it difficult for respondents to parse and understand what they're actually being asked. Question B uses clear, direct language that eliminates the linguistic complexity.",
+				},
+				{
+					questionA: "Do you practice safe sex?",
+					questionB: "Do you own a car?",
+					options: ["Leading Question", "Vague Word", "Sensitive Question"],
+					correctAnswer: "Sensitive Question",
+					explanation:
+						"Question A is a **sensitive question** dealing with private, personal behavior where there's social pressure to give the 'correct' answer. This can lead to dishonest responses. Question B is a neutral, factual question with no social judgment.",
+				},
+			];
+
+			class SurveyBiasQuiz {
+				constructor(quizData) {
+					this.fullQuizData = quizData;
+					this.totalQuestions = this.getQuestionCountFromURL();
+					this.quizData = this.sampleQuestions(
+						this.fullQuizData,
+						this.totalQuestions
+					);
+
+					this.currentQuestionIndex = 0;
+					this.score = 0;
+					this.userAnswers = [];
+					this.elements = this.getElements();
+
+					this.bindEvents();
+					this.startQuiz();
+				}
+
+				getQuestionCountFromURL() {
+					const urlParams = new URLSearchParams(window.location.search);
+					const questionCount = parseInt(urlParams.get("questions"), 10);
+					const maxQuestions = this.fullQuizData.length;
+
+					if (questionCount > 0 && questionCount <= maxQuestions) {
+						return questionCount;
+					}
+					// Default to 6 questions if no parameter specified
+					return 6;
+				}
+
+				sampleQuestions(questions, count) {
+					const shuffled = [...questions].sort(() => 0.5 - Math.random());
+					return shuffled.slice(0, count);
+				}
+
+				getElements() {
+					const elementIds = [
+						"question-screen",
+						"results-container",
+						"question-header",
+						"question-a",
+						"question-b",
+						"options-container",
+						"feedback-container",
+						"next-btn",
+						"next-question-number",
+						"progress-bar",
+						"progress-text",
+						"score-display",
+						"performance-message",
+						"breakdown-list",
+						"question-review-list",
+						"download-btn",
+						"restart-btn",
+					];
+					const elements = {};
+					for (const id of elementIds) {
+						const key = id.replace(/-./g, (m) => m[1].toUpperCase()); // kebab-case to camelCase
+						elements[key] = document.getElementById(id);
+						if (!elements[key]) {
+							console.error(
+								`Initialization Error: Element with ID #${id} not found.`
+							);
+						}
+					}
+					return elements;
+				}
+
+				bindEvents() {
+					this.elements.nextBtn.addEventListener("click", () =>
+						this.nextQuestion()
+					);
+					this.elements.restartBtn.addEventListener("click", () =>
+						this.restartQuiz()
+					);
+					this.elements.downloadBtn.addEventListener("click", () =>
+						this.downloadResults()
+					);
+				}
+
+				startQuiz() {
+					this.currentQuestionIndex = 0;
+					this.score = 0;
+					this.userAnswers = [];
+					this.elements.questionScreen.classList.remove("hidden");
+					this.elements.resultsContainer.classList.add("hidden");
+					this.showQuestion();
+				}
+
+				showQuestion() {
+					this.elements.feedbackContainer.classList.add("hidden");
+					this.elements.feedbackContainer.classList.remove("show");
+					this.elements.nextBtn.classList.add("hidden");
+
+					const currentQuestion = this.quizData[this.currentQuestionIndex];
+					const totalQuestions = this.quizData.length;
+					const currentQuestionNum = this.currentQuestionIndex + 1;
+
+					const progressPercent =
+						(this.currentQuestionIndex / totalQuestions) * 100;
+					this.elements.progressBar.style.width = `${progressPercent}%`;
+					this.elements.progressText.textContent = `Question ${currentQuestionNum} of ${totalQuestions}`;
+
+					this.elements.questionHeader.textContent = `Question Pair ${currentQuestionNum}`;
+					this.elements.questionA.textContent = currentQuestion.questionA;
+					this.elements.questionB.textContent = currentQuestion.questionB;
+
+					if (this.currentQuestionIndex < totalQuestions - 1) {
+						this.elements.nextBtn.firstElementChild.textContent =
+							"Next Question";
+						this.elements.nextQuestionNumber.textContent =
+							currentQuestionNum + 1;
+					} else {
+						this.elements.nextBtn.firstElementChild.textContent =
+							"View Results";
+					}
+
+					this.renderOptions(currentQuestion);
+				}
+
+				renderOptions(question) {
+					this.elements.optionsContainer.innerHTML = "";
+					question.options.forEach((option) => {
+						const button = document.createElement("button");
+						button.textContent = option;
+						button.className = "option-btn";
+						button.onclick = () => this.selectAnswer(button, option, question);
+						this.elements.optionsContainer.appendChild(button);
+					});
+				}
+
+				selectAnswer(button, selectedOption, question) {
+					const isCorrect = selectedOption === question.correctAnswer;
+					this.userAnswers.push({
+						question: `Question ${this.currentQuestionIndex + 1}`,
+						isCorrect: isCorrect,
+					});
+
+					if (isCorrect) {
+						this.score++;
+						button.classList.add("correct");
+						this.showFeedback(true, question.explanation);
+					} else {
+						button.classList.add("incorrect");
+						this.showFeedback(
+							false,
+							question.explanation,
+							question.correctAnswer
+						);
+						this.highlightCorrectAnswer(question.correctAnswer);
+					}
+
+					this.disableAllOptions();
+					this.elements.nextBtn.classList.remove("hidden");
+					this.elements.nextBtn.focus();
+				}
+
+				showFeedback(isCorrect, explanation, correctAnswer = null) {
+					const container = this.elements.feedbackContainer;
+					const formattedExplanation = explanation
+						.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+						.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+					if (isCorrect) {
+						container.innerHTML = `
+                    <strong>🎉 Correct!</strong><br><br>
+                    ${formattedExplanation}
+                `;
+						container.className = "feedback-correct show";
+					} else {
+						container.innerHTML = `
+                    <strong>❌ Not quite.</strong> The best answer is <strong>${correctAnswer}</strong>.<br><br>
+                    ${formattedExplanation}
+                `;
+						container.className = "feedback-incorrect show";
+					}
+					container.classList.remove("hidden");
+				}
+
+				highlightCorrectAnswer(correctAnswer) {
+					Array.from(this.elements.optionsContainer.children).forEach((btn) => {
+						if (btn.textContent === correctAnswer) {
+							btn.classList.add("correct");
+						}
+					});
+				}
+
+				disableAllOptions() {
+					Array.from(this.elements.optionsContainer.children).forEach((btn) => {
+						btn.disabled = true;
+					});
+				}
+
+				nextQuestion() {
+					this.currentQuestionIndex++;
+					if (this.currentQuestionIndex < this.quizData.length) {
+						this.showQuestion();
+					} else {
+						this.showResults();
+					}
+				}
+
+				showResults() {
+					this.elements.questionScreen.classList.add("hidden");
+					this.elements.resultsContainer.classList.remove("hidden");
+
+					const totalQuestions = this.quizData.length;
+					const percentage = Math.round((this.score / totalQuestions) * 100);
+
+					this.elements.scoreDisplay.textContent = `${this.score}/${totalQuestions}`;
+					this.elements.performanceMessage.textContent =
+						this.getPerformanceMessage(percentage);
+					this.showResultsBreakdown();
+					this.showQuestionReview();
+
+					this.elements.progressBar.style.width = "100%";
+				}
+
+				getPerformanceMessage(percentage) {
+					if (percentage >= 90)
+						return "🌟 Outstanding! You're a survey bias expert!";
+					if (percentage >= 80)
+						return "🎯 Excellent work! You have a great understanding of survey biases.";
+					if (percentage >= 70)
+						return "👍 Good job! You identified most biases correctly.";
+					if (percentage >= 60)
+						return "📚 Not bad! Consider reviewing survey methodology principles.";
+					return "🤔 This is tricky stuff! Try again to improve your understanding.";
+				}
+
+				showResultsBreakdown() {
+					this.elements.breakdownList.innerHTML = this.userAnswers
+						.map(
+							(answer) =>
+								`<div class="breakdown-item">
+                                <span>${answer.question}</span>
+                                <span class="breakdown-status ${
+																	answer.isCorrect
+																		? "breakdown-correct"
+																		: "breakdown-incorrect"
+																}">
+                                    ${
+																			answer.isCorrect
+																				? "✓ Correct"
+																				: "✗ Incorrect"
+																		}
+                                </span>
+                             </div>`
+						)
+						.join("");
+				}
+
+				showQuestionReview() {
+					this.elements.questionReviewList.innerHTML = this.quizData
+						.map(
+							(questionData, index) =>
+								`<div class="review-item">
+                                <div class="review-bias-type">
+                                    <span>❌</span>
+                                    <span>Question ${index + 1}: ${
+									questionData.correctAnswer
+								}</span>
+                                </div>
+                                <p class="review-question">"${
+																	questionData.questionA
+																}"</p>
+                             </div>`
+						)
+						.join("");
+				}
+
+				restartQuiz() {
+					this.elements.restartBtn.innerHTML =
+						'<span>🔄 Restarting...</span><span class="loading"></span>';
+					setTimeout(() => {
+						this.elements.restartBtn.innerHTML =
+							"<span>🔄 Take Quiz Again</span>";
+						this.quizData = this.sampleQuestions(
+							this.fullQuizData,
+							this.totalQuestions
+						);
+						this.startQuiz();
+					}, 500);
+				}
+
+				downloadResults() {
+					const originalTitle = document.title;
+					document.title = `Survey Bias Quiz Results - Score: ${this.score}/${this.quizData.length}`;
+					// The @media print styles will handle the rest
+					window.print();
+					document.title = originalTitle;
+				}
+			}
+
+			document.addEventListener("DOMContentLoaded", () => {
+				new SurveyBiasQuiz(FULL_QUIZ_DATA);
+			});
+		</script>
+	</body>
+</html>
