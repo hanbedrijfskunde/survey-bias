@@ -225,6 +225,9 @@
 				background: var(--incorrect-gradient);
 				animation: shake 0.6s ease;
 			}
+			.option-btn.partial {
+				background: linear-gradient(145deg, #fd7e14, #e8650a);
+			}
 
 			@keyframes pulse {
 				0%,
@@ -271,6 +274,11 @@
 				background: linear-gradient(145deg, #f8d7da, #f1b2b2);
 				border-left: 5px solid #dc3545;
 				color: #721c24;
+			}
+			.feedback-partial {
+				background: linear-gradient(145deg, #fff3cd, #ffe69c);
+				border-left: 5px solid #fd7e14;
+				color: #664d03;
 			}
 
 			#next-btn,
@@ -391,6 +399,10 @@
 				background-color: #f8d7da;
 				color: #721c24;
 			}
+			.breakdown-partial {
+				background-color: #fff3cd;
+				color: #664d03;
+			}
 
 			.review-item {
 				margin-bottom: 20px;
@@ -407,6 +419,18 @@
 				display: flex;
 				align-items: center;
 				gap: 8px;
+			}
+			.review-item.correct {
+				border-left-color: #28a745;
+			}
+			.review-item.partial {
+				border-left-color: #fd7e14;
+			}
+			.review-bias-type.correct {
+				color: #28a745;
+			}
+			.review-bias-type.partial {
+				color: #fd7e14;
 			}
 			.review-question {
 				font-style: italic;
@@ -517,7 +541,8 @@
 					border: 1px solid #ccc;
 				}
 				.breakdown-correct,
-				.breakdown-incorrect {
+				.breakdown-incorrect,
+				.breakdown-partial {
 					border: 1px solid #ccc;
 					color: #000;
 					background: #eee;
@@ -601,6 +626,7 @@
 				>
 					0/8
 				</div>
+				<p id="partial-count" class="hidden" style="font-size: 1em; color: #fd7e14; font-weight: 500; margin: -15px 0 5px;"></p>
 				<p class="performance-message" id="performance-message"></p>
 
 				<div class="results-breakdown" id="results-breakdown">
@@ -886,8 +912,9 @@
 						"Double-Barrelled Question",
 					],
 					correctAnswer: "Double-Barrelled Question",
+					alsoAcceptable: ["Leading Question"],
 					explanation:
-						"Question A is a **double-barrelled question** because it asks about two separate issues in one question: tax increases AND universal coverage. Respondents might support one aspect but not the other. Question B focuses on a single, clear issue.",
+						"Question A is a **double-barrelled question** because it asks about two separate issues in one question: tax increases AND universal coverage. Respondents might support one aspect but not the other. Question B focuses on a single, clear issue. You could also argue this is a **leading question**, as the phrasing 'will increase taxes' is negatively loaded. However, the double-barrelled structure is the dominant problem: even a neutrally worded version would still combine two separate topics.",
 				},
 				{
 					questionA:
@@ -905,8 +932,9 @@
 						"Rate your satisfaction with our customer service: Very Satisfied, Satisfied, Neutral, Dissatisfied, Very Dissatisfied",
 					options: ["Missing Interval", "Scale Format", "Forced Choice"],
 					correctAnswer: "Forced Choice",
+					alsoAcceptable: ["Missing Interval"],
 					explanation:
-						"Question A demonstrates **forced choice** bias by providing insufficient response categories. There's no option for dissatisfaction, forcing negative responses into 'Average.' Question B provides a balanced scale with appropriate negative options.",
+						"Question A demonstrates **forced choice** bias by providing insufficient response categories. There's no option for dissatisfaction, forcing negative responses into 'Average.' Question B provides a balanced scale with appropriate negative options. You could also say there is a **missing interval**, since negative options are literally absent. However, forced choice is the more dominant problem: the scale pushes respondents toward positive responses, fundamentally distorting the measurement.",
 				},
 				{
 					questionA:
@@ -918,8 +946,9 @@
 						"Complex Question",
 					],
 					correctAnswer: "Double-Barrelled Question",
+					alsoAcceptable: ["Sensitive Question"],
 					explanation:
-						"Question A is a **double-barrelled question** that asks about two completely different topics: income and job satisfaction. These should be separate questions. Question B focuses on one clear topic.",
+						"Question A is a **double-barrelled question** that asks about two completely different topics: income and job satisfaction. These should be separate questions. Question B focuses on one clear topic. You could also argue this is a **sensitive question**, since asking about income is privacy-sensitive. However, the double-barrelled structure is the primary problem: combining two unrelated topics in one question makes it impossible to give a single clear answer.",
 				},
 				{
 					questionA: "Have you ever used illegal drugs in your lifetime?",
@@ -940,8 +969,9 @@
 						"Complex Question",
 					],
 					correctAnswer: "Technical Jargon",
+					alsoAcceptable: ["Complex Question"],
 					explanation:
-						"Question A uses **technical jargon** and unnecessarily complex language ('utilize,' 'interpersonal communication purposes') that may confuse respondents. Question B uses simple, everyday language that is easier to understand.",
+						"Question A uses **technical jargon** and unnecessarily complex language ('utilize,' 'interpersonal communication purposes') that may confuse respondents. Question B uses simple, everyday language that is easier to understand. You could also argue this is a **complex question** due to its long sentence structure. However, technical jargon is the dominant problem: the specific formal terms 'interpersonal communication purposes' make the question inaccessible regardless of its length.",
 				},
 				{
 					questionA: "Do you regularly engage in physical activity?",
@@ -949,8 +979,9 @@
 						"In the past 7 days, on how many days did you exercise for at least 30 minutes?",
 					options: ["Belief vs Behavior", "Vague Word", "Ambiguous Question"],
 					correctAnswer: "Ambiguous Question",
+					alsoAcceptable: ["Belief vs Behavior"],
 					explanation:
-						"Question A is **ambiguous** because 'regularly' and 'physical activity' are unclear terms that can be interpreted many different ways. Question B provides specific parameters (time frame, duration, clear definition) that eliminate ambiguity.",
+						"Question A is **ambiguous** because 'regularly' and 'physical activity' are unclear terms that can be interpreted many different ways. Question B provides specific parameters (time frame, duration, clear definition) that eliminate ambiguity. You could also reason this is a **belief vs behavior** question, since 'regularly' may reflect an intention rather than measurable behavior. However, ambiguity is the primary problem: multiple key concepts in the question are insufficiently defined.",
 				},
 				{
 					questionA:
@@ -963,8 +994,9 @@
 						"Double-Barrelled Question",
 					],
 					correctAnswer: "Forced Choice",
+					alsoAcceptable: ["Leading Question"],
 					explanation:
-						"Question A demonstrates **forced choice** bias by only offering 'agree' or 'disagree' to a loaded premise, with no neutral option. Question B provides a full range of balanced options, including a neutral middle ground.",
+						"Question A demonstrates **forced choice** bias by only offering 'agree' or 'disagree' to a loaded premise, with no neutral option. Question B provides a full range of balanced options, including a neutral middle ground. You could also argue this is a **leading question**, since the premise 'men are better suited emotionally' embeds a judgment. However, forced choice is the dominant problem: even without the loaded premise, the scale offers no neutral middle option.",
 				},
 				{
 					questionA:
@@ -983,8 +1015,9 @@
 						"Do you support, oppose, or are neutral about a tax on disposable diapers to offset the environmental cost?",
 					options: ["Complex Question", "Framing", "Double-Barrelled Question"],
 					correctAnswer: "Framing",
+					alsoAcceptable: ["Complex Question"],
 					explanation:
-						"Question A uses **framing** by providing biased information upfront to persuade the respondent against the tax before asking the question. This leading context manipulates responses. Question B is direct and neutral.",
+						"Question A uses **framing** by providing biased information upfront to persuade the respondent against the tax before asking the question. This leading context manipulates responses. Question B is direct and neutral. You could also argue this is a **complex question**, since it is extremely long and contains a lot of information. However, framing is the dominant problem: the information is not neutral but deliberately selective, designed to steer the respondent.",
 				},
 				{
 					questionA: "Did anyone physically attack you in the last six months?",
@@ -995,8 +1028,9 @@
 						"Starting Time",
 					],
 					correctAnswer: "Starting Time",
+					alsoAcceptable: ["Sensitive Question"],
 					explanation:
-						"This demonstrates the importance of **starting time** precision. The 6-month vs 12-month difference will fundamentally change the data collected. Different time frames make results incomparable and can bias findings.",
+						"This demonstrates the importance of **starting time** precision. The 6-month vs 12-month difference will fundamentally change the data collected. Different time frames make results incomparable and can bias findings. You could also argue this is a **sensitive question**, since questions about physical attacks concern a sensitive topic. However, starting time is the primary problem: the difference in time frame (6 vs. 12 months) fundamentally changes which data is collected.",
 				},
 				{
 					questionA:
@@ -1008,8 +1042,9 @@
 						"Complex Question",
 					],
 					correctAnswer: "Double-Barrelled Question",
+					alsoAcceptable: ["Sensitive Question"],
 					explanation:
-						"Question A is a **double-barrelled question** that asks about two separate issues in one question: job satisfaction AND fair compensation. A respondent might be satisfied with their job duties but unhappy with their pay, or vice versa. Question B focuses on one clear aspect.",
+						"Question A is a **double-barrelled question** that asks about two separate issues in one question: job satisfaction AND fair compensation. A respondent might be satisfied with their job duties but unhappy with their pay, or vice versa. Question B focuses on one clear aspect. You could also argue this is a **sensitive question**, since asking about salary is privacy-sensitive. However, the double-barrelled structure is the dominant problem: combining two unrelated topics makes it impossible to give a single unambiguous answer.",
 				},
 				{
 					questionA:
@@ -1022,16 +1057,18 @@
 						"Complex Question",
 					],
 					correctAnswer: "Complex Question",
+					alsoAcceptable: ["Sensitive Question"],
 					explanation:
-						"Question A is a **complex question** due to its confusing double negation ('possible...never happened') and convoluted sentence structure that makes it difficult for respondents to parse and understand what they're actually being asked. Question B uses clear, direct language that eliminates the linguistic complexity.",
+						"Question A is a **complex question** due to its confusing double negation ('possible...never happened') and convoluted sentence structure that makes it difficult for respondents to parse and understand what they're actually being asked. Question B uses clear, direct language that eliminates the linguistic complexity. You could also reason this is a **sensitive question**, since the Holocaust is obviously an emotionally charged topic. However, complex question is the primary problem: the double negation and confused sentence structure make it difficult for any respondent to understand what is actually being asked.",
 				},
 				{
 					questionA: "Do you practice safe sex?",
 					questionB: "Do you own a car?",
 					options: ["Leading Question", "Vague Word", "Sensitive Question"],
 					correctAnswer: "Sensitive Question",
+					alsoAcceptable: ["Vague Word"],
 					explanation:
-						"Question A is a **sensitive question** dealing with private, personal behavior where there's social pressure to give the 'correct' answer. This can lead to dishonest responses. Question B is a neutral, factual question with no social judgment.",
+						"Question A is a **sensitive question** dealing with private, personal behavior where there's social pressure to give the 'correct' answer. This can lead to dishonest responses. Question B is a neutral, factual question with no social judgment. You could also argue that 'safe sex' is a **vague word** that means different things to different people. However, sensitive question is the dominant problem: the social pressure to report the 'correct' behavior outweighs the vagueness of the terminology.",
 				},
 			];
 
@@ -1084,6 +1121,7 @@
 						"progress-bar",
 						"progress-text",
 						"score-display",
+						"partial-count",
 						"performance-message",
 						"breakdown-list",
 						"question-review-list",
@@ -1121,6 +1159,7 @@
 					this.userAnswers = [];
 					this.elements.questionScreen.classList.remove("hidden");
 					this.elements.resultsContainer.classList.add("hidden");
+					this.elements.partialCount.classList.add("hidden");
 					this.showQuestion();
 				}
 
@@ -1168,22 +1207,24 @@
 
 				selectAnswer(button, selectedOption, question) {
 					const isCorrect = selectedOption === question.correctAnswer;
+					const isPartial = !isCorrect && (question.alsoAcceptable || []).includes(selectedOption);
 					this.userAnswers.push({
 						question: `Question ${this.currentQuestionIndex + 1}`,
-						isCorrect: isCorrect,
+						isCorrect,
+						isPartial,
 					});
 
 					if (isCorrect) {
 						this.score++;
 						button.classList.add("correct");
-						this.showFeedback(true, question.explanation);
+						this.showFeedback("correct", question.explanation);
+					} else if (isPartial) {
+						button.classList.add("partial");
+						this.showFeedback("partial", question.explanation, question.correctAnswer);
+						this.highlightCorrectAnswer(question.correctAnswer);
 					} else {
 						button.classList.add("incorrect");
-						this.showFeedback(
-							false,
-							question.explanation,
-							question.correctAnswer
-						);
+						this.showFeedback("incorrect", question.explanation, question.correctAnswer);
 						this.highlightCorrectAnswer(question.correctAnswer);
 					}
 
@@ -1192,18 +1233,24 @@
 					this.elements.nextBtn.focus();
 				}
 
-				showFeedback(isCorrect, explanation, correctAnswer = null) {
+				showFeedback(status, explanation, correctAnswer = null) {
 					const container = this.elements.feedbackContainer;
 					const formattedExplanation = explanation
 						.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
 						.replace(/\*(.*?)\*/g, "<em>$1</em>");
 
-					if (isCorrect) {
+					if (status === "correct") {
 						container.innerHTML = `
                     <strong>🎉 Correct!</strong><br><br>
                     ${formattedExplanation}
                 `;
 						container.className = "feedback-correct show";
+					} else if (status === "partial") {
+						container.innerHTML = `
+                    <strong>💡 Good reasoning!</strong> This is also defensible. The <em>most dominant</em> problem is however <strong>${correctAnswer}</strong>.<br><br>
+                    ${formattedExplanation}
+                `;
+						container.className = "feedback-partial show";
 					} else {
 						container.innerHTML = `
                     <strong>❌ Not quite.</strong> The best answer is <strong>${correctAnswer}</strong>.<br><br>
@@ -1243,8 +1290,15 @@
 
 					const totalQuestions = this.quizData.length;
 					const percentage = Math.round((this.score / totalQuestions) * 100);
+					const partialCount = this.userAnswers.filter(a => a.isPartial).length;
 
 					this.elements.scoreDisplay.textContent = `${this.score}/${totalQuestions}`;
+					if (partialCount > 0) {
+						this.elements.partialCount.textContent = `(+ ${partialCount} almost correct)`;
+						this.elements.partialCount.classList.remove("hidden");
+					} else {
+						this.elements.partialCount.classList.add("hidden");
+					}
 					this.elements.performanceMessage.textContent =
 						this.getPerformanceMessage(percentage);
 					this.showResultsBreakdown();
@@ -1267,42 +1321,52 @@
 
 				showResultsBreakdown() {
 					this.elements.breakdownList.innerHTML = this.userAnswers
-						.map(
-							(answer) =>
-								`<div class="breakdown-item">
+						.map((answer) => {
+							let statusClass, statusText;
+							if (answer.isCorrect) {
+								statusClass = "breakdown-correct";
+								statusText = "✓ Correct";
+							} else if (answer.isPartial) {
+								statusClass = "breakdown-partial";
+								statusText = "~ Almost correct";
+							} else {
+								statusClass = "breakdown-incorrect";
+								statusText = "✗ Incorrect";
+							}
+							return `<div class="breakdown-item">
                                 <span>${answer.question}</span>
-                                <span class="breakdown-status ${
-																	answer.isCorrect
-																		? "breakdown-correct"
-																		: "breakdown-incorrect"
-																}">
-                                    ${
-																			answer.isCorrect
-																				? "✓ Correct"
-																				: "✗ Incorrect"
-																		}
-                                </span>
-                             </div>`
-						)
+                                <span class="breakdown-status ${statusClass}">${statusText}</span>
+                             </div>`;
+						})
 						.join("");
 				}
 
 				showQuestionReview() {
 					this.elements.questionReviewList.innerHTML = this.quizData
-						.map(
-							(questionData, index) =>
-								`<div class="review-item">
-                                <div class="review-bias-type">
-                                    <span>❌</span>
-                                    <span>Question ${index + 1}: ${
-									questionData.correctAnswer
-								}</span>
+						.map((questionData, index) => {
+							const userAnswer = this.userAnswers[index];
+							let itemClass, icon, biasTypeClass;
+							if (userAnswer && userAnswer.isCorrect) {
+								itemClass = "review-item correct";
+								icon = "✅";
+								biasTypeClass = "review-bias-type correct";
+							} else if (userAnswer && userAnswer.isPartial) {
+								itemClass = "review-item partial";
+								icon = "💡";
+								biasTypeClass = "review-bias-type partial";
+							} else {
+								itemClass = "review-item";
+								icon = "❌";
+								biasTypeClass = "review-bias-type";
+							}
+							return `<div class="${itemClass}">
+                                <div class="${biasTypeClass}">
+                                    <span>${icon}</span>
+                                    <span>Question ${index + 1}: ${questionData.correctAnswer}</span>
                                 </div>
-                                <p class="review-question">"${
-																	questionData.questionA
-																}"</p>
-                             </div>`
-						)
+                                <p class="review-question">"${questionData.questionA}"</p>
+                             </div>`;
+						})
 						.join("");
 				}
 

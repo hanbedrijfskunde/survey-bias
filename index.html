@@ -243,6 +243,9 @@
 				background: var(--incorrect-gradient);
 				animation: shake 0.6s ease;
 			}
+			.option-btn.partial {
+				background: linear-gradient(145deg, #fd7e14, #e8650a);
+			}
 
 			@keyframes pulse {
 				0%,
@@ -289,6 +292,11 @@
 				background: linear-gradient(145deg, #f8d7da, #f1b2b2);
 				border-left: 5px solid #dc3545;
 				color: #721c24;
+			}
+			.feedback-partial {
+				background: linear-gradient(145deg, #fff3cd, #ffe69c);
+				border-left: 5px solid #fd7e14;
+				color: #664d03;
 			}
 
 			#start-btn,
@@ -424,6 +432,10 @@
 				background-color: #f8d7da;
 				color: #721c24;
 			}
+			.breakdown-partial {
+				background-color: #fff3cd;
+				color: #664d03;
+			}
 
 			.review-item {
 				margin-bottom: 20px;
@@ -440,6 +452,18 @@
 				display: flex;
 				align-items: center;
 				gap: 8px;
+			}
+			.review-item.correct {
+				border-left-color: #28a745;
+			}
+			.review-item.partial {
+				border-left-color: #fd7e14;
+			}
+			.review-bias-type.correct {
+				color: #28a745;
+			}
+			.review-bias-type.partial {
+				color: #fd7e14;
 			}
 			.review-question {
 				font-style: italic;
@@ -551,7 +575,8 @@
 					border: 1px solid #ccc;
 				}
 				.breakdown-correct,
-				.breakdown-incorrect {
+				.breakdown-incorrect,
+				.breakdown-partial {
 					border: 1px solid #ccc;
 					color: #000;
 					background: #eee;
@@ -658,6 +683,7 @@
 				>
 					0/8
 				</div>
+				<p id="partial-count" class="hidden" style="font-size: 1em; color: #fd7e14; font-weight: 500; margin: -15px 0 5px;"></p>
 				<p class="performance-message" id="performance-message"></p>
 
 				<div class="results-breakdown" id="results-breakdown">
@@ -950,8 +976,9 @@
 					questionB: "Bent u voor of tegen het nieuwe zorgstelsel?",
 					options: ["Sturende Vraag", "Technisch Jargon", "Twee-in-één Vraag"],
 					correctAnswer: "Twee-in-één Vraag",
+					alsoAcceptable: ["Sturende Vraag"],
 					explanation:
-						"Vraag A is een **twee-in-één vraag** (double-barrelled) omdat het over twee aparte onderwerpen in één vraag gaat: belastingverhoging EN universele dekking. Respondenten kunnen het ene aspect steunen, maar het andere niet. Vraag B richt zich op één duidelijk onderwerp.",
+						"Vraag A is een **twee-in-één vraag** (double-barrelled) omdat het over twee aparte onderwerpen in één vraag gaat: belastingverhoging EN universele dekking. Respondenten kunnen het ene aspect steunen, maar het andere niet. Vraag B richt zich op één duidelijk onderwerp. Je kunt ook betogen dat dit een **sturende vraag** is, omdat de formulering 'zal verhogen' negatief geladen is. Toch is de twee-in-één structuur het dominante probleem: zelfs een neutraal geformuleerde versie zou nog steeds twee onderwerpen combineren.",
 				},
 				{
 					questionA:
@@ -970,8 +997,9 @@
 						"Beoordeel uw tevredenheid over onze klantenservice: Zeer Tevreden, Tevreden, Neutraal, Ontevreden, Zeer Ontevreden",
 					options: ["Ontbrekend Interval", "Schaalformaat", "Gedwongen Keuze"],
 					correctAnswer: "Gedwongen Keuze",
+					alsoAcceptable: ["Ontbrekend Interval"],
 					explanation:
-						"Vraag A toont **gedwongen keuze**-bias door onvoldoende antwoordcategorieën te bieden. Er is geen optie voor ontevredenheid, waardoor negatieve reacties in 'Gemiddeld' worden gedwongen. Vraag B biedt een gebalanceerde schaal met passende negatieve opties.",
+						"Vraag A toont **gedwongen keuze**-bias door onvoldoende antwoordcategorieën te bieden. Er is geen optie voor ontevredenheid, waardoor negatieve reacties in 'Gemiddeld' worden gedwongen. Vraag B biedt een gebalanceerde schaal met passende negatieve opties. Je zou ook kunnen zeggen dat er een **ontbrekend interval** is, omdat negatieve opties letterlijk ontbreken. Toch is gedwongen keuze het dominantere probleem: de schaal dwingt respondenten in een positieve richting, wat fundamenteel de meting vervormt.",
 				},
 				{
 					questionA:
@@ -979,8 +1007,9 @@
 					questionB: "Wat is uw geschatte jaarinkomen?",
 					options: ["Gevoelige Vraag", "Twee-in-één Vraag", "Complexe Vraag"],
 					correctAnswer: "Twee-in-één Vraag",
+					alsoAcceptable: ["Gevoelige Vraag"],
 					explanation:
-						"Vraag A is een **twee-in-één vraag** die over twee totaal verschillende onderwerpen gaat: inkomen en baantevredenheid. Dit zouden aparte vragen moeten zijn. Vraag B richt zich op één duidelijk onderwerp.",
+						"Vraag A is een **twee-in-één vraag** die over twee totaal verschillende onderwerpen gaat: inkomen en baantevredenheid. Dit zouden aparte vragen moeten zijn. Vraag B richt zich op één duidelijk onderwerp. Je kunt ook beargumenteren dat dit een **gevoelige vraag** is, want vragen naar inkomen is privacygevoelig. Toch is de twee-in-één structuur het primaire probleem: de combinatie van twee ongerelateerde onderwerpen in één vraag maakt het onmogelijk om één duidelijk antwoord te geven.",
 				},
 				{
 					questionA: "Heeft u ooit in uw leven illegale drugs gebruikt?",
@@ -1001,8 +1030,9 @@
 						"Complexe Vraag",
 					],
 					correctAnswer: "Technisch Jargon",
+					alsoAcceptable: ["Complexe Vraag"],
 					explanation:
-						"Vraag A gebruikt **technisch jargon** en onnodig complexe taal ('gebruik maken van', 'interpersoonlijke communicatiedoeleinden') die respondenten kan verwarren. Vraag B gebruikt eenvoudige, alledaagse taal die gemakkelijker te begrijpen is.",
+						"Vraag A gebruikt **technisch jargon** en onnodig complexe taal ('gebruik maken van', 'interpersoonlijke communicatiedoeleinden') die respondenten kan verwarren. Vraag B gebruikt eenvoudige, alledaagse taal die gemakkelijker te begrijpen is. Je kunt ook stellen dat dit een **complexe vraag** is vanwege de lange zinsstructuur. Toch is technisch jargon het dominante probleem: de specifieke vaktermen 'interpersoonlijke communicatiedoeleinden' maken de vraag ontoegankelijk, los van de lengte.",
 				},
 				{
 					questionA: "Doet u regelmatig aan lichaamsbeweging?",
@@ -1014,8 +1044,9 @@
 						"Dubbelzinnige Vraag",
 					],
 					correctAnswer: "Dubbelzinnige Vraag",
+					alsoAcceptable: ["Overtuiging vs. Gedrag"],
 					explanation:
-						"Vraag A is **dubbelzinnig** omdat 'regelmatig' en 'lichaamsbeweging' onduidelijke termen zijn die op vele manieren kunnen worden geïnterpreteerd. Vraag B geeft specifieke parameters (tijdsbestek, duur, duidelijke definitie) die de dubbelzinnigheid wegnemen.",
+						"Vraag A is **dubbelzinnig** omdat 'regelmatig' en 'lichaamsbeweging' onduidelijke termen zijn die op vele manieren kunnen worden geïnterpreteerd. Vraag B geeft specifieke parameters (tijdsbestek, duur, duidelijke definitie) die de dubbelzinnigheid wegnemen. Je kunt ook redeneren dat dit een **overtuiging vs. gedrag**-vraag is, omdat 'regelmatig' kan wijzen op een intentie in plaats van meetbaar gedrag. Toch is dubbelzinnigheid het primaire probleem: meerdere kernbegrippen in de vraag zijn onvoldoende gedefinieerd.",
 				},
 				{
 					questionA:
@@ -1024,8 +1055,9 @@
 						"Zou u zeggen dat de meeste mannen emotioneel beter geschikt zijn voor de politiek dan de meeste vrouwen, dat mannen en vrouwen even geschikt zijn, of dat vrouwen op dit gebied beter geschikt zijn dan mannen?",
 					options: ["Sturende Vraag", "Gedwongen Keuze", "Twee-in-één Vraag"],
 					correctAnswer: "Gedwongen Keuze",
+					alsoAcceptable: ["Sturende Vraag"],
 					explanation:
-						"Vraag A toont **gedwongen keuze**-bias door alleen 'eens' of 'oneens' aan te bieden bij een beladen premisse, zonder neutrale optie. Vraag B biedt een volledig scala aan gebalanceerde opties, inclusief een neutraal midden.",
+						"Vraag A toont **gedwongen keuze**-bias door alleen 'eens' of 'oneens' aan te bieden bij een beladen premisse, zonder neutrale optie. Vraag B biedt een volledig scala aan gebalanceerde opties, inclusief een neutraal midden. Je kunt ook betogen dat dit een **sturende vraag** is, omdat de premisse 'mannen zijn emotioneel beter geschikt' een oordeel inbakt. Toch is gedwongen keuze het dominante probleem: zelfs zonder de beladen premisse biedt de schaal geen neutrale middenoptie.",
 				},
 				{
 					questionA:
@@ -1044,8 +1076,9 @@
 						"Bent u voor, tegen of neutraal over een belasting op wegwerpluiers om de milieukosten te compenseren?",
 					options: ["Complexe Vraag", "Framing", "Twee-in-één Vraag"],
 					correctAnswer: "Framing",
+					alsoAcceptable: ["Complexe Vraag"],
 					explanation:
-						"Vraag A gebruikt **framing** door vooraf bevooroordeelde informatie te geven om de respondent tegen de belasting te overtuigen voordat de vraag wordt gesteld. Deze sturende context manipuleert de antwoorden. Vraag B is direct en neutraal.",
+						"Vraag A gebruikt **framing** door vooraf bevooroordeelde informatie te geven om de respondent tegen de belasting te overtuigen voordat de vraag wordt gesteld. Deze sturende context manipuleert de antwoorden. Vraag B is direct en neutraal. Je kunt ook stellen dat dit een **complexe vraag** is, want de vraag is extreem lang en bevat veel informatie. Toch is framing het dominante probleem: de informatie is niet neutraal maar bewust selectief gepresenteerd om de respondent te sturen.",
 				},
 				{
 					questionA:
@@ -1054,8 +1087,9 @@
 						"Heeft iemand u in de afgelopen 12 maanden fysiek aangevallen?",
 					options: ["Dubbelzinnige Vraag", "Gevoelige Vraag", "Begintijd"],
 					correctAnswer: "Begintijd",
+					alsoAcceptable: ["Gevoelige Vraag"],
 					explanation:
-						"Dit toont het belang van precisie in de **begintijd**. Het verschil tussen 6 maanden en 12 maanden zal de verzamelde gegevens fundamenteel veranderen. Verschillende tijdsbestekken maken resultaten onvergelijkbaar en kunnen bevindingen beïnvloeden.",
+						"Dit toont het belang van precisie in de **begintijd**. Het verschil tussen 6 maanden en 12 maanden zal de verzamelde gegevens fundamenteel veranderen. Verschillende tijdsbestekken maken resultaten onvergelijkbaar en kunnen bevindingen beïnvloeden. Je kunt ook beargumenteren dat dit een **gevoelige vraag** is, omdat vragen over fysieke aanvallen een sensitief onderwerp betreft. Toch is begintijd het primaire probleem: het verschil in tijdsbestek (6 vs. 12 maanden) verandert fundamenteel welke gegevens worden verzameld.",
 				},
 				{
 					questionA:
@@ -1063,8 +1097,9 @@
 					questionB: "Bent u tevreden met uw huidige baan?",
 					options: ["Gevoelige Vraag", "Twee-in-één Vraag", "Complexe Vraag"],
 					correctAnswer: "Twee-in-één Vraag",
+					alsoAcceptable: ["Gevoelige Vraag"],
 					explanation:
-						"Vraag A is een **twee-in-één vraag** die over twee aparte onderwerpen in één vraag gaat: baantevredenheid EN eerlijke beloning. Een respondent kan tevreden zijn met zijn taken, maar ontevreden over zijn salaris, of andersom. Vraag B richt zich op één duidelijk aspect.",
+						"Vraag A is een **twee-in-één vraag** die over twee aparte onderwerpen in één vraag gaat: baantevredenheid EN eerlijke beloning. Een respondent kan tevreden zijn met zijn taken, maar ontevreden over zijn salaris, of andersom. Vraag B richt zich op één duidelijk aspect. Je kunt ook betogen dat dit een **gevoelige vraag** is, want vragen over salaris is privacygevoelig. Toch is de twee-in-één structuur het dominante probleem: de combinatie van twee ongerelateerde onderwerpen maakt het onmogelijk om één eenduidig antwoord te geven.",
 				},
 				{
 					questionA:
@@ -1073,16 +1108,18 @@
 						"Gelooft u dat de uitroeiing van de Joden door de nazi's (de Holocaust) heeft plaatsgevonden?",
 					options: ["Gevoelige Vraag", "Twee-in-één Vraag", "Complexe Vraag"],
 					correctAnswer: "Complexe Vraag",
+					alsoAcceptable: ["Gevoelige Vraag"],
 					explanation:
-						"Vraag A is een **complexe vraag** vanwege de verwarrende dubbele ontkenning ('onmogelijk...nooit heeft plaatsgevonden') en de ingewikkelde zinsstructuur die het voor respondenten moeilijk maakt te begrijpen wat er eigenlijk wordt gevraagd. Vraag B gebruikt duidelijke, directe taal die de taalkundige complexiteit elimineert.",
+						"Vraag A is een **complexe vraag** vanwege de verwarrende dubbele ontkenning ('onmogelijk...nooit heeft plaatsgevonden') en de ingewikkelde zinsstructuur die het voor respondenten moeilijk maakt te begrijpen wat er eigenlijk wordt gevraagd. Vraag B gebruikt duidelijke, directe taal die de taalkundige complexiteit elimineert. Je kunt ook redeneren dat dit een **gevoelige vraag** is, want de Holocaust is uiteraard een emotioneel beladen onderwerp. Toch is complexe vraag het primaire probleem: de dubbele ontkenning en verwarde zinsstructuur maken het voor iedere respondent moeilijk te begrijpen wat er eigenlijk wordt gevraagd.",
 				},
 				{
 					questionA: "Praktiseert u veilige seks?",
 					questionB: "Heeft u een auto?",
 					options: ["Sturende Vraag", "Vaag Woord", "Gevoelige Vraag"],
 					correctAnswer: "Gevoelige Vraag",
+					alsoAcceptable: ["Vaag Woord"],
 					explanation:
-						"Vraag A is een **gevoelige vraag** die gaat over privé, persoonlijk gedrag waar sociale druk is om het 'juiste' antwoord te geven. Dit kan leiden tot oneerlijke antwoorden. Vraag B is een neutrale, feitelijke vraag zonder sociaal oordeel.",
+						"Vraag A is een **gevoelige vraag** die gaat over privé, persoonlijk gedrag waar sociale druk is om het 'juiste' antwoord te geven. Dit kan leiden tot oneerlijke antwoorden. Vraag B is een neutrale, feitelijke vraag zonder sociaal oordeel. Je kunt ook beargumenteren dat 'veilige seks' een **vaag woord** is dat voor mensen verschillende betekenissen heeft. Toch is gevoelige vraag het dominante probleem: de sociale druk om het 'juiste' gedrag te rapporteren overheerst de vaagheid van de terminologie.",
 				},
 				{
 					questionA:
@@ -1118,8 +1155,9 @@
 						"Sturende Vraag",
 					],
 					correctAnswer: "Overtuiging vs. Gedrag",
+					alsoAcceptable: ["Gevoelige Vraag"],
 					explanation:
-						"Vraag A meet een **overtuiging** of intentie, wat vaak verschilt van feitelijk **gedrag** (sociale wenselijkheid speelt hier een rol). Vraag B vraagt naar concreet, feitelijk gedrag in het verleden, wat een betrouwbaarder antwoord oplevert.",
+						"Vraag A meet een **overtuiging** of intentie, wat vaak verschilt van feitelijk **gedrag** (sociale wenselijkheid speelt hier een rol). Vraag B vraagt naar concreet, feitelijk gedrag in het verleden, wat een betrouwbaarder antwoord oplevert. Je kunt ook stellen dat dit een **gevoelige vraag** is, omdat niet-ingrijpen sociaal onwenselijk kan voelen. Toch is overtuiging vs. gedrag het primaire probleem: de vraag meet een hypothetische intentie in plaats van aantoonbaar feitelijk gedrag.",
 				},
 				{
 					questionA:
@@ -1128,8 +1166,9 @@
 						"Hoe tevreden bent u met de snelheid van onze service? (Schaal van 1=Zeer ontevreden tot 5=Zeer tevreden)",
 					options: ["Gedwongen Keuze", "Ongevoelige Meting", "Korte Vraag"],
 					correctAnswer: "Ongevoelige Meting",
+					alsoAcceptable: ["Gedwongen Keuze"],
 					explanation:
-						"Vraag A gebruikt een **ongevoelige meting**. Een 'Ja/Nee'-antwoord kan geen onderscheid maken tussen 'een beetje tevreden' en 'extreem tevreden'. Vraag B gebruikt een Likert-schaal die veel genuanceerdere data oplevert.",
+						"Vraag A gebruikt een **ongevoelige meting**. Een 'Ja/Nee'-antwoord kan geen onderscheid maken tussen 'een beetje tevreden' en 'extreem tevreden'. Vraag B gebruikt een Likert-schaal die veel genuanceerdere data oplevert. Je kunt ook betogen dat dit een **gedwongen keuze** is, want de respondent heeft slechts twee opties. Toch is ongevoelige meting het dominante probleem: het fundamentele tekort is dat de meetschaal te grof is om betekenisvolle verschillen in tevredenheid te detecteren.",
 				},
 				{
 					questionA: "Wat is uw leeftijd? 18-25, 26-35, 46-55, 56+",
@@ -1163,8 +1202,9 @@
 						"Wat is uw bruto maandsalaris? (U mag een exact bedrag invullen)",
 					options: ["Vaag Woord", "Gegevensdegradatie", "Gevoelige Vraag"],
 					correctAnswer: "Gegevensdegradatie",
+					alsoAcceptable: ["Vaag Woord"],
 					explanation:
-						"Vraag A leidt tot **gegevensdegradatie**. Door te vragen naar brede, subjectieve categorieën gaat waardevolle, precieze informatie verloren. Vraag B verzamelt continue data, die later altijd nog in categorieën kan worden ingedeeld als dat nodig is.",
+						"Vraag A leidt tot **gegevensdegradatie**. Door te vragen naar brede, subjectieve categorieën gaat waardevolle, precieze informatie verloren. Vraag B verzamelt continue data, die later altijd nog in categorieën kan worden ingedeeld als dat nodig is. Je kunt ook redeneren dat de categorieën 'laag', 'gemiddeld' en 'hoog' **vage woorden** zijn. Toch is gegevensdegradatie het primaire probleem: door van continue data een ruwe categorie te maken, gaat waardevolle informatie onherstelbaar verloren.",
 				},
 				{
 					questionA:
@@ -1173,8 +1213,9 @@
 						"Wat is uw mening over het bouwen van een nieuwe kerncentrale in uw provincie?",
 					options: ["Framing", "Mind-set", "Sturende Vraag"],
 					correctAnswer: "Mind-set",
+					alsoAcceptable: ["Framing"],
 					explanation:
-						"Vraag A creëert een **mind-set**-bias. Door de respondent eerst te primen met vragen over de gevaren, wordt de perceptie negatief beïnvloed voordat de eigenlijke vraag wordt gesteld. Vraag B stelt de vraag zonder deze voorafgaande context.",
+						"Vraag A creëert een **mind-set**-bias. Door de respondent eerst te primen met vragen over de gevaren, wordt de perceptie negatief beïnvloed voordat de eigenlijke vraag wordt gesteld. Vraag B stelt de vraag zonder deze voorafgaande context. Je kunt ook betogen dat dit **framing** is, omdat de voorgaande vragen de perceptie in een bepaalde richting sturen. Toch is mind-set het meest precieze label: het gaat specifiek om de cumulatieve invloed van een reeks eerdere vragen op de mentale toestand van de respondent.",
 				},
 				{
 					questionA:
@@ -1187,8 +1228,9 @@
 						"Complexe Vraag",
 					],
 					correctAnswer: "Ongebruikelijk Woord",
+					alsoAcceptable: ["Technisch Jargon"],
 					explanation:
-						"Vraag A gebruikt een **ongebruikelijk woord** ('proliferatie') dat niet iedereen zal begrijpen. Dit kan leiden tot verwarring of onjuiste antwoorden. Vraag B gebruikt een eenvoudiger en duidelijker synoniem ('toename van het aantal').",
+						"Vraag A gebruikt een **ongebruikelijk woord** ('proliferatie') dat niet iedereen zal begrijpen. Dit kan leiden tot verwarring of onjuiste antwoorden. Vraag B gebruikt een eenvoudiger en duidelijker synoniem ('toename van het aantal'). Je kunt ook stellen dat 'proliferatie' **technisch jargon** is. Toch is ongebruikelijk woord het meest precieze label: het begrip is niet vakspecifiek, maar eenvoudigweg ongewoon en weinig gebruikt in het dagelijks taalgebruik.",
 				},
 				{
 					questionA:
@@ -1197,8 +1239,9 @@
 						"In welk van de volgende periodes was uw laatste vliegreis? (Afgelopen 6 maanden, 7-12 maanden geleden, 1-2 jaar geleden, langer dan 2 jaar geleden)",
 					options: ["Telescoop-effect", "Gevoelige Vraag", "Begintijd"],
 					correctAnswer: "Telescoop-effect",
+					alsoAcceptable: ["Begintijd"],
 					explanation:
-						"Vraag A kan het **telescoop-effect** uitlokken, waarbij mensen de neiging hebben om gebeurtenissen die verder weg liggen als recenter te herinneren. Vraag B geeft duidelijke periodes, wat helpt om de herinnering beter te verankeren en dit effect te verminderen.",
+						"Vraag A kan het **telescoop-effect** uitlokken, waarbij mensen de neiging hebben om gebeurtenissen die verder weg liggen als recenter te herinneren. Vraag B geeft duidelijke periodes, wat helpt om de herinnering beter te verankeren en dit effect te verminderen. Je kunt ook beargumenteren dat dit een **begintijd**-probleem is, omdat de tijdsreferentie onduidelijk is. Toch is het telescoop-effect het meest specifieke antwoord: het gaat hier om de cognitieve vertekening waarbij verre gebeurtenissen als recenter worden herinnerd.",
 				},
 			];
 
@@ -1253,6 +1296,7 @@
 						"progress-bar",
 						"progress-text",
 						"score-display",
+						"partial-count",
 						"performance-message",
 						"breakdown-list",
 						"question-review-list",
@@ -1291,6 +1335,7 @@
 					this.elements.introScreen.classList.remove("hidden");
 					this.elements.questionScreen.classList.add("hidden");
 					this.elements.resultsContainer.classList.add("hidden");
+					this.elements.partialCount.classList.add("hidden");
 				}
 
 				startQuiz() {
@@ -1300,6 +1345,7 @@
 					this.elements.introScreen.classList.add("hidden");
 					this.elements.questionScreen.classList.remove("hidden");
 					this.elements.resultsContainer.classList.add("hidden");
+					this.elements.partialCount.classList.add("hidden");
 					this.showQuestion();
 				}
 
@@ -1347,22 +1393,24 @@
 
 				selectAnswer(button, selectedOption, question) {
 					const isCorrect = selectedOption === question.correctAnswer;
+					const isPartial = !isCorrect && (question.alsoAcceptable || []).includes(selectedOption);
 					this.userAnswers.push({
 						question: `Vraag ${this.currentQuestionIndex + 1}`,
-						isCorrect: isCorrect,
+						isCorrect,
+						isPartial,
 					});
 
 					if (isCorrect) {
 						this.score++;
 						button.classList.add("correct");
-						this.showFeedback(true, question.explanation);
+						this.showFeedback("correct", question.explanation);
+					} else if (isPartial) {
+						button.classList.add("partial");
+						this.showFeedback("partial", question.explanation, question.correctAnswer);
+						this.highlightCorrectAnswer(question.correctAnswer);
 					} else {
 						button.classList.add("incorrect");
-						this.showFeedback(
-							false,
-							question.explanation,
-							question.correctAnswer
-						);
+						this.showFeedback("incorrect", question.explanation, question.correctAnswer);
 						this.highlightCorrectAnswer(question.correctAnswer);
 					}
 
@@ -1371,18 +1419,24 @@
 					this.elements.nextBtn.focus();
 				}
 
-				showFeedback(isCorrect, explanation, correctAnswer = null) {
+				showFeedback(status, explanation, correctAnswer = null) {
 					const container = this.elements.feedbackContainer;
 					const formattedExplanation = explanation
 						.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
 						.replace(/\*(.*?)\*/g, "<em>$1</em>");
 
-					if (isCorrect) {
+					if (status === "correct") {
 						container.innerHTML = `
                     <strong>🎉 Correct!</strong><br><br>
                     ${formattedExplanation}
                 `;
 						container.className = "feedback-correct show";
+					} else if (status === "partial") {
+						container.innerHTML = `
+                    <strong>💡 Goede redenering!</strong> Dit is ook verdedigbaar. Het <em>meest dominante</em> probleem is echter <strong>${correctAnswer}</strong>.<br><br>
+                    ${formattedExplanation}
+                `;
+						container.className = "feedback-partial show";
 					} else {
 						container.innerHTML = `
                     <strong>❌ Niet helemaal.</strong> Het beste antwoord is <strong>${correctAnswer}</strong>.<br><br>
@@ -1422,8 +1476,15 @@
 
 					const totalQuestions = this.quizData.length;
 					const percentage = Math.round((this.score / totalQuestions) * 100);
+					const partialCount = this.userAnswers.filter(a => a.isPartial).length;
 
 					this.elements.scoreDisplay.textContent = `${this.score}/${totalQuestions}`;
+					if (partialCount > 0) {
+						this.elements.partialCount.textContent = `(+ ${partialCount} bijna goed)`;
+						this.elements.partialCount.classList.remove("hidden");
+					} else {
+						this.elements.partialCount.classList.add("hidden");
+					}
 					this.elements.performanceMessage.textContent =
 						this.getPerformanceMessage(percentage);
 					this.showResultsBreakdown();
@@ -1446,42 +1507,52 @@
 
 				showResultsBreakdown() {
 					this.elements.breakdownList.innerHTML = this.userAnswers
-						.map(
-							(answer) =>
-								`<div class="breakdown-item">
+						.map((answer) => {
+							let statusClass, statusText;
+							if (answer.isCorrect) {
+								statusClass = "breakdown-correct";
+								statusText = "✓ Correct";
+							} else if (answer.isPartial) {
+								statusClass = "breakdown-partial";
+								statusText = "~ Bijna goed";
+							} else {
+								statusClass = "breakdown-incorrect";
+								statusText = "✗ Incorrect";
+							}
+							return `<div class="breakdown-item">
                                 <span>${answer.question}</span>
-                                <span class="breakdown-status ${
-																	answer.isCorrect
-																		? "breakdown-correct"
-																		: "breakdown-incorrect"
-																}">
-                                    ${
-																			answer.isCorrect
-																				? "✓ Correct"
-																				: "✗ Incorrect"
-																		}
-                                </span>
-                             </div>`
-						)
+                                <span class="breakdown-status ${statusClass}">${statusText}</span>
+                             </div>`;
+						})
 						.join("");
 				}
 
 				showQuestionReview() {
 					this.elements.questionReviewList.innerHTML = this.quizData
-						.map(
-							(questionData, index) =>
-								`<div class="review-item">
-                                <div class="review-bias-type">
-                                    <span>❌</span>
-                                    <span>Vraag ${index + 1}: ${
-									questionData.correctAnswer
-								}</span>
+						.map((questionData, index) => {
+							const userAnswer = this.userAnswers[index];
+							let itemClass, icon, biasTypeClass;
+							if (userAnswer && userAnswer.isCorrect) {
+								itemClass = "review-item correct";
+								icon = "✅";
+								biasTypeClass = "review-bias-type correct";
+							} else if (userAnswer && userAnswer.isPartial) {
+								itemClass = "review-item partial";
+								icon = "💡";
+								biasTypeClass = "review-bias-type partial";
+							} else {
+								itemClass = "review-item";
+								icon = "❌";
+								biasTypeClass = "review-bias-type";
+							}
+							return `<div class="${itemClass}">
+                                <div class="${biasTypeClass}">
+                                    <span>${icon}</span>
+                                    <span>Vraag ${index + 1}: ${questionData.correctAnswer}</span>
                                 </div>
-                                <p class="review-question">"${
-																	questionData.questionA
-																}"</p>
-                             </div>`
-						)
+                                <p class="review-question">"${questionData.questionA}"</p>
+                             </div>`;
+						})
 						.join("");
 				}
 
